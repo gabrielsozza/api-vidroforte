@@ -1,0 +1,508 @@
+/* =========================================================
+   MEDIA.CSS — responsivo para o HTML enviado
+   (desktop-first no styles.css -> aqui usamos max-width)
+   ========================================================= */
+
+/* Ajustes globais úteis */
+@media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  } /* Usuários que pedem menos animação. [web:68] */
+  
+  /* =========================================================
+     <= 1024px (notebook/tablet grande)
+     ========================================================= */
+  @media (max-width: 1024px){
+    body{ padding:16px; }
+  
+    .app{
+      padding:14px;
+      border-radius:22px;
+    }
+  
+    /* Ajusta grid para dar mais espaço à imagem */
+    .layout{
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap:12px;
+    }
+  
+    .header-controls{ min-width: 320px; }
+  }
+  
+  /* =========================================================
+     <= 900px (tablet/landscape)
+     ========================================================= */
+  @media (max-width: 900px){
+    body{ padding:14px; }
+  
+    /* Header passa a empilhar e não “estoura” */
+    .app-header{
+      flex-direction: column;
+      align-items: stretch;
+      gap:12px;
+    }
+  
+    .header-controls{
+      min-width: 0;      /* remove o travamento de 360px */
+      width: 100%;
+    }
+  
+    .select{
+      width: 100%;
+    }
+  
+    /* Layout vira 1 coluna (imagem em cima, painel embaixo) */
+    .layout{
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+  
+    .left, .right{
+      padding:12px;
+    }
+  
+    /* Topo da esquerda pode quebrar melhor */
+    .left-top{
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap:10px;
+    }
+  
+    /* View-switch vira “carrossel” horizontal (melhor no toque) */
+    .view-switch{
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    }
+  
+    .view-btn{
+      flex: 0 0 auto;
+      min-height: 44px;         /* alvo mínimo confortável para toque. [web:62] */
+      padding: 10px 14px;
+    }
+  
+    /* Painel: melhora leitura em 1 coluna */
+    .row{
+      justify-content: flex-start;
+    }
+    .row-value{
+      max-width: 100%;
+      text-align: left;
+      justify-content: flex-start;
+    }
+  }
+  
+  /* =========================================================
+     <= 600px (celulares grandes)
+     ========================================================= */
+  @media (max-width: 600px){
+    body{ padding:12px; }
+  
+    .app{
+      padding:12px;
+      border-radius:18px;
+    }
+  
+    .title{ font-size:16px; }
+    .subtitle{ font-size:12px; }
+  
+    .left, .right{
+      padding:10px;
+    }
+  
+    /* Imagem: reduz padding e acompanha hotspots */
+    .image-wrap{
+      padding:8px;
+      border-radius:14px;
+    }
+    .hotspots{
+      inset:8px;
+    }
+  
+    /* Tooltip não deve “tapar” a imagem em telas menores */
+    .tooltip{
+      min-width: 220px;
+      max-width: calc(100vw - 28px);
+    }
+  }
+  
+  /* =========================================================
+     <= 420px (celulares comuns)
+     ========================================================= */
+  @media (max-width: 420px){
+    body{ padding:10px; }
+  
+    .app{
+      padding:10px;
+      border-radius:16px;
+    }
+  
+    .brand{
+      align-items: flex-start;
+    }
+  
+    .dot{
+      margin-top: 5px;
+    }
+  
+    .image-wrap{
+      padding:6px;
+      border-radius:12px;
+    }
+    .hotspots{
+      inset:6px;
+    }
+  
+    .view-btn{
+      min-height: 44px; /* mantém toque confortável. [web:62] */
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+  
+    .panel-title{ font-size:15px; }
+    .badge, .tag{ padding:6px 9px; }
+  }
+  
+  /* =========================================================
+     <= 360px (320px/pequenos)
+     ========================================================= */
+  @media (max-width: 360px){
+    body{ padding:8px; }
+  
+    .app{
+      padding:8px;
+      border-radius:14px;
+    }
+  
+    .subtitle{
+      line-height: 1.35;
+    }
+  
+    .image-wrap{
+      padding:6px;
+    }
+    .hotspots{
+      inset:6px;
+    }
+  
+    .hint{
+      font-size:10px;
+    }
+  }
+  
+  /* =========================================================
+     Touch vs Mouse
+     ========================================================= */
+  @media (pointer: coarse){
+    /* No toque não existe hover real; tooltip costuma atrapalhar a interação. [web:67] */
+    .tooltip{ display:none !important; }
+  
+    /* Melhora resposta ao toque */
+    .hotspot{ touch-action: manipulation; }
+    .hotspot::after{
+      content:"";
+      position:absolute;
+      inset:-10px;          /* aumenta área de toque sem mexer no retângulo */
+      border-radius: 14px;
+    }
+  }
+  
+
+
+  /* Responsividade dos botões de autenticação */
+@media (max-width: 768px) {
+  .auth-container {
+    position: static;
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .guest-buttons {
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .btn-auth {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .auth-separator {
+    font-size: 13px;
+  }
+  
+  .user-menu {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .user-name {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .guest-buttons {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .auth-separator {
+    display: none;
+  }
+  
+  .btn-auth {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+
+@media (max-width: 980px){
+  :root{ --vf-header-h: 68px; }
+
+  html, body{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .vf-burger{ display: inline-flex; }
+
+  /* vira menu “drawer” (hamburger) */
+  .vf-nav{
+    position: fixed;
+    top: var(--vf-header-h);
+    right: 12px;
+    left: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+
+    background: var(--vf-header-bg);
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: var(--vf-shadow);
+
+    transform: translateY(-10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+
+  .vf-nav__link{
+    height: 48px;
+    justify-content: flex-start;
+  }
+
+  body.vf-navOpen .vf-nav{
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.vf-navOpen .vf-navBackdrop{
+    display: block;
+  }
+
+  .vf-navBackdrop{
+    background: transparent; /* remove o escuro */
+  }
+  
+}
+
+@media (prefers-reduced-motion: reduce){
+
+  .vf-nav,
+  .vf-nav__link,
+  .vf-burger__lines::before,
+  .vf-burger__lines::after{
+    transition: none !important;
+  }
+}
+
+
+
+
+/* ===== admin-catalogo.html responsivo ===== */
+@media (max-width: 960px){
+  .ca-header{
+    padding:16px 18px;
+  }
+  .ca-header-left{
+    flex-direction:row;
+    align-items:flex-start;
+  }
+  .ca-main{
+    padding:18px 16px 20px;
+  }
+  .ca-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 640px){
+  body{
+    padding:12px;
+  }
+  .ca-header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .ca-header-left img{
+    max-width:120px;
+  }
+  .ca-filters{
+    width:100%;
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .ca-field{
+    min-width:0;
+    width:100%;
+  }
+}
+
+/* ===== admin-catalogo.html responsivo ===== */
+@media (max-width: 960px){
+  .ca-main{
+    padding:18px 16px 20px;
+  }
+  .ca-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 640px){
+  body{
+    padding:12px;
+  }
+  .ca-header{
+    flex-direction:column;
+    align-items:flex-start;
+    padding:16px 18px;
+  }
+  .ca-header-left img{
+    max-width:120px;
+  }
+  .ca-filters{
+    width:100%;
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .ca-field{
+    min-width:0;
+    width:100%;
+  }
+}
+
+/* Modal ocupa mais área em telas pequenas */
+@media (max-width: 480px){
+  .ca-modal{
+    width:calc(100% - 24px);
+    max-height:90vh;
+    border-radius:12px;
+  }
+}
+
+
+@media (max-width: 900px){
+  .app-header{
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .catalog-toolbar{
+    justify-content: stretch;
+  }
+
+  .catalog-toolbar .field{
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px){
+  .auth-container--header .auth-separator{
+    display: none;
+  }
+  .auth-container--header .guest-buttons{
+    gap: 6px;
+  }
+  .auth-container--header .btn-auth{
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+
+@media (max-width: 900px){
+  .app-header{
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .catalog-toolbar{
+    grid-template-columns: 1fr;
+    max-width: none;
+  }
+}
+
+
+@media (max-width: 980px){
+
+  /* 1) Links do menu em coluna */
+  .vf-nav{
+    display: flex; /* garante que é flex no mobile */
+  }
+
+  /* Se você criou wrappers (recomendado) */
+  .vf-navLinks{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+  }
+
+  /* Fallback: se NÃO tiver .vf-navLinks e os <a> estiverem direto no nav */
+  .vf-nav > a.vf-nav__link{
+    width: 100%;
+  }
+
+  .vf-nav__link{
+    width: 100%;
+    display: flex;
+  }
+
+  /* 2) Auth também empilha dentro do drawer */
+  .vf-navAuth,
+  .vf-nav .auth-container{
+    width: 100%;
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .vf-nav .guest-buttons{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .vf-nav .btn-auth{
+    width: 100%;
+    max-width: none;
+  }
+
+  .vf-nav .auth-separator{
+    display: none;
+  }
+}

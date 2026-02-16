@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Vidroforte</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left img {
+            max-width: 120px;
+            height: auto;
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: white;
+            color: #1b5e20;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .container h2 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #666;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: #1b5e20;
+        }
+
+        .tab-btn.active {
+            color: #1b5e20;
+            border-bottom-color: #1b5e20;
+        }
+
+        .tab-count {
+            background: #1b5e20;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        .users-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .user-card {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+        }
+
+        .user-card:hover {
+            border-color: #2e7d32;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
+        }
+
+        .user-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-item label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .info-item span {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-approve {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-reject {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header {
+                text-align: center;
+            }
+
+            .header-left {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .user-info {
+                grid-template-columns: 1fr;
+            }
+
+            .user-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .tabs-container {
+                gap: 5px;
+            }
+
+            .tab-btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 15px;
+            }
+
+            .header {
+                padding: 15px 20px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <img src="./img/logo.png" alt="Vidroforte Logo">
+            <div>
+                <h1>Painel Administrativo</h1>
+                <p>Gerenciar cadastros de clientes</p>
+            </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3>Cadastros Pendentes</h3>
+            <div class="number" id="totalPendentes">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Usuários Aprovados</h3>
+            <div class="number" id="totalAprovados">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Usuários Rejeitados</h3>
+            <div class="number" id="totalRejeitados">0</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Gerenciamento de Cadastros</h2>
+        
+        <div id="alert" class="alert"></div>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="trocarAba('pendentes')">
+                Pendentes <span class="tab-count" id="countPendentes">0</span>
+            </button>
+            <button class="tab-btn" onclick="trocarAba('aprovados')">
+                Aprovados <span class="tab-count" id="countAprovados">0</span>
+            </button>
+            <button class="tab-btn" onclick="trocarAba('rejeitados')">
+                Rejeitados <span class="tab-count" id="countRejeitados">0</span>
+            </button>
+        </div>
+
+        <!-- Aba Pendentes -->
+        <div id="tabPendentes" class="tab-content active">
+            <div id="emptyStatePendentes" class="empty-state" style="display: none;">
+                <div class="empty-icon">✓</div>
+                <h3>Nenhum cadastro pendente</h3>
+                <p>Todos os cadastros foram processados.</p>
+            </div>
+            <div id="usersPendentesList" class="users-grid"></div>
+        </div>
+
+        <!-- Aba Aprovados -->
+        <div id="tabAprovados" class="tab-content">
+            <div id="emptyStateAprovados" class="empty-state" style="display: none;">
+                <div class="empty-icon">📋</div>
+                <h3>Nenhum usuário aprovado ainda</h3>
+                <p>Os usuários aprovados aparecerão aqui.</p>
+            </div>
+            <div id="usersAprovadosList" class="users-grid"></div>
+        </div>
+
+        <!-- Aba Rejeitados -->
+        <div id="tabRejeitados" class="tab-content">
+            <div id="emptyStateRejeitados" class="empty-state" style="display: none;">
+                <div class="empty-icon">❌</div>
+                <h3>Nenhum usuário rejeitado</h3>
+                <p>Os usuários rejeitados aparecerão aqui.</p>
+            </div>
+            <div id="usersRejeitadosList" class="users-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        let abaAtiva = 'pendentes';
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'admin-login.html';
+        }
+
+        function trocarAba(aba) {
+            abaAtiva = aba;
+            
+            // Atualizar botões
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="trocarAba('${aba}')"]`).classList.add('active');
+            
+            // Atualizar conteúdo
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`tab${aba.charAt(0).toUpperCase() + aba.slice(1)}`).classList.add('active');
+        }
+
+        async function carregarUsuarios() {
+            try {
+                // Carregar todos os status
+                const [pendentes, aprovados, rejeitados] = await Promise.all([
+                    fetch('http://localhost:8080/api/admin/pendentes').then(r => r.json()),
+                    fetch('http://localhost:8080/api/admin/aprovados').then(r => r.json()),
+                    fetch('http://localhost:8080/api/admin/rejeitados').then(r => r.json())
+                ]);
+
+                // Atualizar contadores das abas
+                document.getElementById('countPendentes').textContent = pendentes.length;
+                document.getElementById('countAprovados').textContent = aprovados.length;
+                document.getElementById('countRejeitados').textContent = rejeitados.length;
+
+                // Atualizar contadores do dashboard
+                document.getElementById('totalPendentes').textContent = pendentes.length;
+                document.getElementById('totalAprovados').textContent = aprovados.length;
+                document.getElementById('totalRejeitados').textContent = rejeitados.length;
+
+                // Renderizar cada aba
+                renderizarUsuarios(pendentes, 'usersPendentesList', 'emptyStatePendentes', true);
+                renderizarUsuarios(aprovados, 'usersAprovadosList', 'emptyStateAprovados', false);
+                renderizarUsuarios(rejeitados, 'usersRejeitadosList', 'emptyStateRejeitados', false);
+
+            } catch (error) {
+                showAlert('Erro ao carregar usuários.', 'error');
+                console.error(error);
+            }
+        }
+
+        function renderizarUsuarios(users, listId, emptyStateId, showActions) {
+            const usersList = document.getElementById(listId);
+            const emptyState = document.getElementById(emptyStateId);
+
+            if (users.length === 0) {
+                usersList.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                usersList.style.display = 'grid';
+                emptyState.style.display = 'none';
+                usersList.innerHTML = '';
+
+                users.forEach(user => {
+                    const userCard = document.createElement('div');
+                    userCard.className = 'user-card';
+                    userCard.id = `user-${user.id}`;
+                    
+                    const dataCadastro = new Date(user.dataCadastro).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    let statusBadge = '';
+                    if (user.status === 'PENDING') statusBadge = '<span class="status-badge status-pending">PENDENTE</span>';
+                    if (user.status === 'APPROVED') statusBadge = '<span class="status-badge status-approved">APROVADO</span>';
+                    if (user.status === 'REJECTED') statusBadge = '<span class="status-badge status-rejected">REJEITADO</span>';
+
+                    userCard.innerHTML = `
+                        <div class="user-info">
+                            <div class="info-item">
+                                <label>Nome</label>
+                                <span>${user.nome}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>E-mail</label>
+                                <span>${user.email}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>CNPJ</label>
+                                <span>${formatarCNPJ(user.cnpj)}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Telefone</label>
+                                <span>${formatarTelefone(user.telefone)}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Data do Cadastro</label>
+                                <span>${dataCadastro}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Status</label>
+                                ${statusBadge}
+                            </div>
+                        </div>
+                        ${showActions ? `
+                            <div class="user-actions">
+                                <button class="btn btn-approve" onclick="aprovar(${user.id})">
+                                    ✓ Aprovar
+                                </button>
+                                <button class="btn btn-reject" onclick="rejeitar(${user.id})">
+                                    ✗ Rejeitar
+                                </button>
+                            </div>
+                        ` : ''}
+                    `;
+                    
+                    usersList.appendChild(userCard);
+                });
+            }
+        }
+
+        function formatarCNPJ(cnpj) {
+            return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+        }
+
+        function formatarTelefone(telefone) {
+            if (telefone.length === 11) {
+                return telefone.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            }
+            return telefone.replace(/^(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+        }
+
+        async function aprovar(userId) {
+            const userCard = document.getElementById(`user-${userId}`);
+            const buttons = userCard.querySelectorAll('.btn');
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.classList.contains('btn-approve')) {
+                    btn.innerHTML = '<span class="loading"></span> Aprovando...';
+                }
+            });
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/admin/aprovar/${userId}`, {
+                    method: 'PUT'
+                });
+
+                if (response.ok) {
+                    showAlert('Usuário aprovado com sucesso! E-mail enviado.', 'success');
+                    setTimeout(() => carregarUsuarios(), 1000);
+                } else {
+                    showAlert('Erro ao aprovar usuário.', 'error');
+                    buttons.forEach(btn => btn.disabled = false);
+                    buttons[0].innerHTML = '✓ Aprovar';
+                }
+            } catch (error) {
+                showAlert('Erro ao conectar com o servidor.', 'error');
+                buttons.forEach(btn => btn.disabled = false);
+                buttons[0].innerHTML = '✓ Aprovar';
+            }
+        }
+
+        async function rejeitar(userId) {
+            if (!confirm('Tem certeza que deseja rejeitar este cadastro?')) {
+                return;
+            }
+
+            const userCard = document.getElementById(`user-${userId}`);
+            const buttons = userCard.querySelectorAll('.btn');
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.classList.contains('btn-reject')) {
+                    btn.innerHTML = '<span class="loading"></span> Rejeitando...';
+                }
+            });
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/admin/rejeitar/${userId}`, {
+                    method: 'PUT'
+                });
+
+                if (response.ok) {
+                    showAlert('Usuário rejeitado. E-mail enviado.', 'success');
+                    setTimeout(() => carregarUsuarios(), 1000);
+                } else {
+                    showAlert('Erro ao rejeitar usuário.', 'error');
+                    buttons.forEach(btn => btn.disabled = false);
+                    buttons[1].innerHTML = '✗ Rejeitar';
+                }
+            } catch (error) {
+                showAlert('Erro ao conectar com o servidor.', 'error');
+                buttons.forEach(btn => btn.disabled = false);
+                buttons[1].innerHTML = '✗ Rejeitar';
+            }
+        }
+
+        // Verificar se é admin
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || user.status !== 'ADMIN') {
+            window.location.href = 'admin-login.html';
+        }
+
+        // Carregar usuários ao abrir a página
+        window.addEventListener('load', function() {
+            carregarUsuarios();
+            setInterval(carregarUsuarios, 30000); // Atualiza a cada 30 segundos
+        });
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Vidroforte · Renault Master</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="media.css" />
+</head>
+
+<body>
+  <header class="vf-header" data-header>
+    <div class="vf-container vf-header__inner">
+      <a class="vf-brand" href="/" aria-label="Vidroforte - Home">
+        <img class="vf-brand__logo" src="./img/logo-branco (1).png" alt="Vidroforte" />
+      </a>
+
+      <nav class="vf-nav" id="vf-nav" aria-label="Menu principal" data-nav>
+        <div class="vf-navLinks">
+          <a class="vf-nav__link" href="/">Home</a>
+          <a class="vf-nav__link" href="/quem-somos">Quem Somos</a>
+          <a class="vf-nav__link" href="/mercados">Mercados</a>
+          <a class="vf-nav__link" href="/catalogo" aria-current="page">Catálogo</a>
+          <a class="vf-nav__link" href="/certificados">Certificados</a>
+          <a class="vf-nav__link" href="/trabalhe-conosco">Trabalhe Conosco</a>
+        </div>
+
+        <div class="vf-navAuth auth-container">
+          <div id="guestButtons" class="guest-buttons">
+            <button id="btnEntrar" onclick="irParaLogin()" class="btn-auth btn-enter">Entre</button>
+            <span class="auth-separator">ou</span>
+            <button id="btnCadastrar" onclick="irParaCadastro()" class="btn-auth btn-register">Cadastre-se</button>
+          </div>
+
+          <div id="userMenu" class="user-menu">
+            <span id="userName" class="user-name"></span>
+            <button onclick="logout()" class="btn-auth btn-logout">Sair</button>
+          </div>
+        </div>
+      </nav>
+
+
+      <button class="vf-burger" type="button" aria-controls="vf-nav" aria-expanded="false" aria-label="Abrir menu"
+        data-burger>
+        <span class="vf-burger__lines" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <div class="vf-navBackdrop" data-backdrop hidden></div>
+  </header>
+
+
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <div class="brand-text">
+          <h1 class="title">Catálogo de Vidros</h1>
+          <p class="subtitle">Clique/toque fixa e mostra detalhes</p>
+        </div>
+      </div>
+
+      <div class="catalog-toolbar">
+        <!-- KIT -->
+        <div class="field">
+          <label class="label" for="kitSelect">Kit (conforme catálogo)</label>
+
+          <!-- Select nativo (mantém para funcionalidade) -->
+          <select id="kitSelect" class="select" style="display:none;"></select>
+
+          <!-- Custom Select -->
+          <div class="vf-custom-select" data-custom-select>
+            <div class="vf-select-trigger" data-trigger>
+              <span class="vf-select-value placeholder">Selecione um kit...</span>
+              <svg class="vf-select-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none">
+                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </div>
+
+            <div class="vf-select-dropdown" data-dropdown>
+              <div class="vf-search-box">
+                <div class="vf-search-row">
+                  <select class="vf-maker-select" data-maker aria-label="Filtrar por montadora">
+                    <option value="">Todas</option>
+                    <!-- o JS vai preencher automaticamente com Fiat, Mercedes, Renault... -->
+                  </select>
+              
+                  <div class="vf-search-inputWrap">
+                    <svg class="vf-search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"></circle>
+                      <path d="M11 11L14.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    </svg>
+                    <input type="text"
+                           class="vf-search-input"
+                           placeholder="Pesquisar kit..."
+                           data-search>
+                  </div>
+                </div>
+              
+                <!-- (opcional) uma linha de ajuda -->
+                <!-- <div class="vf-search-hint">Escolha a montadora e digite o modelo.</div> -->
+              </div>
+              
+
+              <ul class="vf-options-list" data-options></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONFIGURAÇÃO (VARIANT) -->
+        <div class="field">
+          <label class="label" for="filterType">Variáveis</label>
+          <select id="filterType" class="select">
+            <option value="">Todas</option>
+          </select>
+        </div>
+
+        <!-- ABERTURAS (VIEW) -->
+        <div class="field">
+          <label class="label" for="filterView">Aberturas</label>
+          <select id="filterView" class="select"></select>
+        </div>
+      </div>
+    </header>
+
+
+    <main class="layout">
+      <section class="left">
+        <div class="left-top">
+          <div class="vehicle-label" id="vehicleLabel">Selecione um modelo</div>
+        </div>
+
+        <div class="image-wrap" id="imageWrap">
+          <img id="vehicleImg" class="vehicle-img" />
+
+          <div class="tooltip" id="tooltip" role="status" aria-live="polite">
+            <div class="tooltip-title" id="tooltipTitle">Modelo do vidro</div>
+          </div>
+
+          <div class="hotspots" id="hotspots"></div>
+        </div>
+
+      </section>
+
+      <aside class="right">
+        <div class="panel-head">
+          <div>
+            <div class="panel-label">Detalhes do vidro</div>
+            <div class="panel-title" id="infoTitle">Nenhum vidro selecionado</div>
+          </div>
+          <span class="pill" id="kitPill">Kit —</span>
+        </div>
+
+        <div class="panel">
+          <p class="placeholder" id="placeholder">
+            Clique/toque em um vidro na imagem para carregar os dados.
+          </p>
+
+          <div class="row" id="rowKit">
+            <div class="row-label">Kit</div>
+            <div class="row-value">
+              <span id="kitCode">—</span>
+              <span class="badge" id="kitDesc">—</span>
+            </div>
+          </div>
+
+          <div class="divider" id="divA"></div>
+
+          <div class="row" id="rowCode">
+            <div class="row-label">Código</div>
+            <div class="row-value"><span id="code">—</span></div>
+          </div>
+
+          <div class="row" id="rowDesc">
+            <div class="row-label">Descrição</div>
+            <div class="row-value" id="desc">—</div>
+          </div>
+
+          <div class="row" id="rowPos">
+            <div class="row-label">Posição &amp; medidas</div>
+            <div class="row-value">
+              <span class="badge" id="position">—</span>
+              <span class="badge" id="side">—</span>
+              <span class="badge" id="dim">—</span>
+            </div>
+          </div>
+
+          <div class="divider" id="divB"></div>
+
+          <div class="row row-stack" id="rowOptions">
+            <div class="row-label">Opções / Variantes</div>
+            <div class="tags" id="options"></div>
+            <div class="note">
+              Cadastre variações comerciais quando existirem (ex.: controle solar, serigrafado etc).
+            </div>
+          </div>
+
+          <!-- ADICIONE AQUI O BOTÃO PDF -->
+          <button id="btnDownloadPdf" onclick="baixarPDF()" style="
+              background: #1b5e20; 
+              color: white; 
+              padding: 14px 24px; 
+              border: none; 
+              border-radius: 8px; 
+              font-weight: 600; 
+              font-size: 15px;
+              cursor: pointer; 
+              margin-top: 20px; 
+              width: 100%;
+              display: none;
+              transition: all 0.3s ease;
+            " onmouseover="this.style.background='#2e7d32'" onmouseout="this.style.background='#1b5e20'">
+            📄 Baixar Informações em PDF
+          </button>
+
+        </div>
+      </aside>
+    </main>
+  </div>
+
+
+
+
+  <script src="script.js"></script>
+</body>
+
+</html>

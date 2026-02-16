@@ -1,0 +1,2987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel Catálogo - Vidroforte</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="media.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 20px;
+      color: #111827;
+    }
+
+    .ca-header {
+      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+      color: #fff;
+      padding: 20px 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .ca-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ca-header-left img {
+      max-width: 140px;
+      height: auto;
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    .ca-header-title {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .ca-header-sub {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .ca-header-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ca-btn {
+      border: 2px solid #136f29;
+      border-radius: 9px;
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .2s ease;
+      background: transparent;
+      color: #136f29;
+    }
+
+    .ca-btn:hover {
+      background: #136f29;
+      color: #fff;
+    }
+
+    .ca-btn-secondary {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .55);
+    }
+
+    .ca-btn-secondary:hover {
+      background: rgba(255, 255, 255, .24);
+    }
+
+    .ca-btn-primary {
+      background: #136f29;
+      color: #fff;
+      border-color: #136f29;
+    }
+
+    .ca-btn-primary:hover {
+      background: #0d5620;
+      border-color: #0d5620;
+    }
+
+    .ca-btn-danger {
+      background: #dc2626;
+      color: #fff;
+      border-color: #dc2626;
+    }
+
+    .ca-btn-danger:hover {
+      background: #b91c1c;
+      border-color: #b91c1c;
+    }
+
+    .ca-btn-ghost {
+      background: #f3f4f6;
+      color: #374151;
+      border-color: #d1d5db;
+    }
+
+    .ca-btn-ghost:hover {
+      background: #e5e7eb;
+    }
+
+    .ca-main {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, .10);
+      padding: 22px 22px 26px;
+    }
+
+    .ca-main-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 12px;
+    }
+
+    .ca-main-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .ca-main-sub {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .ca-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .ca-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 150px;
+    }
+
+    .ca-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #6b7280;
+    }
+
+    .ca-input,
+    .ca-select {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+      background: #f9fafb;
+    }
+
+    .ca-input:focus,
+    .ca-select:focus {
+      border-color: #1b5e20;
+      box-shadow: 0 0 0 2px rgba(27, 94, 32, .18);
+      background: #fff;
+    }
+
+    .ca-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.1fr);
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    .ca-list {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ca-list-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .ca-list-head-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ca-list-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ca-list-counter {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .ca-kit-table-wrap {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      overflow: hidden;
+      max-height: 520px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ca-kit-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .ca-kit-table thead {
+      background: #f3f4f6;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .ca-kit-table th,
+    .ca-kit-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    .ca-kit-table th {
+      font-weight: 600;
+      font-size: 12px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .ca-kit-row {
+      cursor: pointer;
+      transition: background .12s ease;
+    }
+
+    .ca-kit-row:hover {
+      background: #f9fafb;
+    }
+
+    .ca-kit-row.ca-active {
+      background: #ecfdf3;
+    }
+
+    .ca-chip {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #ecfdf3;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .ca-kit-scroll {
+      overflow: auto;
+      flex: 1 1 auto;
+    }
+
+    .ca-form {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px 14px 16px;
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ca-form-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ca-form-status {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .ca-form-section {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      padding: 10px 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ca-form-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #6b7280;
+    }
+
+    .ca-row-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .ca-row-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .ca-glass-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    .ca-glass-item {
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      padding: 8px;
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ca-glass-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .ca-glass-title {
+      font-weight: 600;
+    }
+
+    .ca-glass-id {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .ca-btn-icon {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #9ca3af;
+      padding: 4px;
+      border-radius: 999px;
+      transition: background .12s ease, color .12s ease;
+    }
+
+    .ca-btn-icon:hover {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .ca-row-3-compact {
+      display: grid;
+      grid-template-columns: 1.1fr .7fr .9fr;
+      gap: 6px;
+    }
+
+    .ca-row-tags {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 6px;
+    }
+
+    .ca-help {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .ca-form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .ca-badge-dirty {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fed7aa;
+    }
+
+    .ca-alert {
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      display: none;
+    }
+
+    .ca-alert.show {
+      display: block;
+    }
+
+    .ca-alert-success {
+      background: #ecfdf5;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .ca-alert-error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    /* IMAGEM DE APRESENTAÇÃO */
+    .ca-presentation-img-wrap {
+      border: 2px dashed #d1d5db;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      background: #f9fafb;
+      position: relative;
+    }
+
+    .ca-presentation-img-wrap img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .ca-presentation-img-placeholder {
+      color: #9ca3af;
+      font-size: 13px;
+      padding: 20px;
+    }
+
+    .ca-presentation-img-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    /* VARIANTES */
+    .ca-variants-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ca-variant-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px;
+      background: #fff;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .ca-variant-card:hover {
+      border-color: #1b5e20;
+      background: #f9fafb;
+    }
+
+    .ca-variant-card.active {
+      border-color: #1b5e20;
+      background: #ecfdf3;
+      box-shadow: 0 0 0 2px rgba(27, 94, 32, .15);
+    }
+
+    .ca-variant-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .ca-variant-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ca-variant-views-count {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    /* MODAL GENÉRICO */
+    .ca-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      /* AUMENTADO de 100 para 300 */
+    }
+
+    .ca-modal-backdrop.ca-open {
+      display: flex;
+    }
+
+    .ca-modal {
+      background: #fff;
+      border-radius: 14px;
+      width: min(540px, calc(100% - 32px));
+      max-height: 80vh;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ca-modal-header {
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ca-modal-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .ca-modal-body {
+      padding: 16px 18px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ca-modal-footer {
+      padding: 10px 18px 12px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* MODAL DE CONFIRMAÇÃO - z-index maior */
+    .ca-modal-backdrop.ca-confirm-modal {
+      z-index: 9999 !important;
+    }
+
+    /* EDITOR DE MARCAÇÕES */
+    .ca-editor-backdrop {
+      position: fixed;
+      inset: 0;
+      background: #f5f5f5;
+      display: none;
+      z-index: 200;
+      overflow: hidden;
+    }
+
+    .ca-editor-backdrop.ca-open {
+      display: block;
+    }
+
+    .ca-editor {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .ca-editor-header {
+      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    }
+
+    .ca-editor-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .ca-editor-subtitle {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-top: 2px;
+    }
+
+    .ca-editor-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, .12);
+      padding: 4px;
+      border-radius: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ca-editor-tab {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, .7);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all .15s ease;
+      position: relative;
+    }
+
+    .ca-editor-tab:hover {
+      background: rgba(255, 255, 255, .16);
+      color: #fff;
+    }
+
+    .ca-editor-tab.active {
+      background: #fff;
+      color: #1b5e20;
+    }
+
+    .ca-editor-tab-delete {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #dc2626;
+      color: #fff;
+      border-radius: 999px;
+      width: 16px;
+      height: 16px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .ca-editor-tab:hover .ca-editor-tab-delete {
+      display: flex;
+    }
+
+    .ca-editor-body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .ca-editor-canvas-wrap {
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: auto;
+      padding: 20px;
+    }
+
+    .ca-editor-canvas-inner {
+      position: relative;
+      display: inline-block;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+    }
+
+    .ca-editor-img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .ca-editor-overlay {
+      position: absolute;
+      inset: 0;
+      cursor: crosshair;
+    }
+
+    .ca-editor-mode-badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(27, 94, 32, .9);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+      z-index: 10;
+    }
+
+    .ca-hotspot-rect {
+      position: absolute;
+      border: 2px solid #1b5e20;
+      background: rgba(27, 94, 32, .12);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, .8);
+      cursor: move;
+      will-change: transform;
+    }
+
+    .ca-hotspot-rect:hover,
+    .ca-hotspot-rect.selected {
+      background: rgba(27, 94, 32, .28);
+      border-color: #2e7d32;
+    }
+
+    .ca-hotspot-rect.dragging {
+      opacity: 0.7;
+      cursor: move !important;
+      z-index: 9999;
+    }
+
+    .ca-hotspot-label {
+      position: absolute;
+      top: -22px;
+      left: 0;
+      background: #1b5e20;
+      color: #fff;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .ca-editor-sidebar {
+      background: #fff;
+      border-left: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ca-editor-sidebar-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ca-editor-sidebar-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ca-editor-sidebar-body {
+      flex: 1;
+      overflow: auto;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ca-editor-upload {
+      border: 2px dashed #d1d5db;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      transition: all .15s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .ca-editor-upload:hover {
+      border-color: #1b5e20;
+      background: #f9fafb;
+    }
+
+    .ca-editor-upload.active {
+      border-color: #1b5e20;
+      background: #ecfdf3;
+      box-shadow: 0 0 0 2px rgba(27, 94, 32, .15);
+    }
+
+    .ca-editor-upload input {
+      display: none;
+    }
+
+    .ca-editor-upload-label {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .ca-editor-upload-label strong {
+      color: #1b5e20;
+    }
+
+    .ca-editor-upload-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .ca-hotspot-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      background: #f9fafb;
+      cursor: pointer;
+      transition: all .12s ease;
+    }
+
+    .ca-hotspot-card:hover {
+      border-color: #1b5e20;
+      background: #ecfdf3;
+    }
+
+    .ca-hotspot-card.selected {
+      border-color: #1b5e20;
+      background: #ecfdf3;
+      box-shadow: 0 0 0 2px rgba(27, 94, 32, .18);
+    }
+
+    .ca-hotspot-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .ca-hotspot-card-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .ca-hotspot-card-id {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .ca-hotspot-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ca-editor-footer {
+      padding: 12px 20px;
+      border-top: 1px solid #e5e7eb;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="ca-header">
+    <div class="ca-header-left">
+      <img src="./img/logo.png" alt="Vidroforte Logo">
+      <div>
+        <div class="ca-header-title">Painel de Catálogo</div>
+        <div class="ca-header-sub">
+          Gerencie kits, variantes, views e vidros do catálogo interativo.
+        </div>
+      </div>
+    </div>
+    <div class="ca-header-actions">
+      <button class="ca-btn ca-btn-danger" id="logoutBtn">
+        Sair
+      </button>
+    </div>
+  </header>
+
+  <main class="ca-main">
+    <div class="ca-main-head">
+      <div>
+        <div class="ca-main-title">Kits cadastrados</div>
+        <div class="ca-main-sub">
+          Clique em um kit para editar variantes, views e vidros.
+        </div>
+      </div>
+      <div class="ca-filters">
+        <div class="ca-field">
+          <label class="ca-label" for="caFilterVehicle">Veículo</label>
+          <select id="caFilterVehicle" class="ca-select">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div class="ca-field">
+          <label class="ca-label" for="caSearch">Busca rápida</label>
+          <input id="caSearch" class="ca-input" placeholder="Código, descrição..." />
+        </div>
+      </div>
+    </div>
+
+    <div id="caAlert" class="ca-alert"></div>
+
+    <section class="ca-grid">
+      <!-- LISTA DE KITS -->
+      <section class="ca-list">
+        <div class="ca-list-head">
+          <div class="ca-list-head-left">
+            <div class="ca-list-title">Lista de kits</div>
+            <div class="ca-list-counter">
+              <span id="caCountKits">0</span> kit(s)
+            </div>
+          </div>
+          <button id="caNewKitBtn" class="ca-btn ca-btn-primary">
+            + Novo modelo
+          </button>
+        </div>
+
+        <div class="ca-kit-table-wrap">
+          <div class="ca-kit-scroll">
+            <table class="ca-kit-table">
+              <thead>
+                <tr>
+                  <th>Veículo</th>
+                  <th>Código</th>
+                  <th>Descrição</th>
+                  <th>ID</th>
+                </tr>
+              </thead>
+              <tbody id="caKitTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- FORM DE EDIÇÃO -->
+      <section class="ca-form">
+        <div class="ca-form-title">
+          <span id="caFormTitle">Nenhum kit selecionado</span>
+          <span id="caFormStatus" class="ca-form-status">Selecione um kit</span>
+        </div>
+
+        <!-- DADOS DO KIT -->
+        <!-- DADOS DO KIT -->
+        <div class="ca-form-section">
+          <div class="ca-form-section-title">Dados do kit</div>
+          <input type="hidden" id="caKitId" />
+
+
+          <div class="ca-row-2">
+            <div class="ca-field">
+              <label class="ca-label">Veículo (rótulo)</label>
+              <input id="caVehicleLabel" class="ca-input" placeholder="Ex.: Renault Master L1H1">
+            </div>
+            <div class="ca-field">
+              <label class="ca-label">Código do kit</label>
+              <input id="caKitCode" class="ca-input" placeholder="Ex.: 04.19-7706-HW">
+            </div>
+          </div>
+
+          <div class="ca-field">
+            <label class="ca-label">Descrição do kit</label>
+            <input id="caKitDesc" class="ca-input" placeholder="Ex.: Kit de Vidros Fixos">
+          </div>
+
+          <div class="ca-field">
+            <label class="ca-label">Foto de apresentação (van sem marcações)</label>
+            <div class="ca-help">Esta foto aparece antes do usuário selecionar a variante/view</div>
+            <div class="ca-presentation-img-wrap" id="caPresentationImgWrap">
+              <div class="ca-presentation-img-placeholder">
+                Nenhuma imagem carregada
+              </div>
+            </div>
+            <input type="file" id="caPresentationImgInput" accept="image/*" style="display:none;">
+            <div class="ca-presentation-img-actions">
+              <label for="caPresentationImgInput" class="ca-btn ca-btn-primary" style="cursor:pointer;">
+                📤 Upload foto apresentação
+              </label>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- VARIANTES -->
+        <div class="ca-form-section" id="caVariantsSection" style="display:none;">
+          <div class="ca-form-section-title">Variantes/Temas</div>
+          <div class="ca-help">
+            Ex: "Padrão", "Ambulância", "Escolar". Cada variante tem suas próprias views e fotos.
+          </div>
+
+          <div class="ca-variants-list" id="caVariantsList"></div>
+
+          <button type="button" id="caAddVariantBtn" class="ca-btn ca-btn-primary" style="margin-top:6px;">
+            + Adicionar variante
+          </button>
+
+          <button type="button" id="caOpenVariantEditorBtn" class="ca-btn ca-btn-primary"
+            style="margin-top:6px;display:none;">
+            📐 Editar views e marcações
+          </button>
+        </div>
+
+        <!-- VIDROS -->
+        <div class="ca-form-section" id="caGlassesSection" style="display:none;">
+          <div class="ca-form-section-title">Vidros (glasses)</div>
+          <div class="ca-help">
+            Vidros compartilhados por todas as variantes. Cada vidro precisa ter um ID único.
+          </div>
+
+          <div class="ca-glass-list" id="caGlassList"></div>
+
+          <button type="button" id="caAddGlassBtn" class="ca-btn ca-btn-primary" style="margin-top:6px;">
+            + Adicionar vidro
+          </button>
+        </div>
+
+        <!-- RODAPÉ -->
+        <div class="ca-form-footer">
+          <div id="caDirtyBadge" class="ca-badge-dirty" style="display:none;">
+            Alterações não salvas
+          </div>
+
+          <div style="display:flex; gap:8px;">
+            <button type="button" id="caDeleteKitBtn" class="ca-btn ca-btn-danger" style="display:none;">
+              Excluir kit
+            </button>
+            <button type="button" id="caSaveKitBtn" class="ca-btn ca-btn-primary">
+              Salvar alterações
+            </button>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- MODAL NOVO KIT -->
+  <div id="caModalNewKit" class="ca-modal-backdrop">
+    <div class="ca-modal">
+      <div class="ca-modal-header">
+        <div class="ca-modal-title">Novo modelo (kit)</div>
+        <button type="button" class="ca-btn-icon" id="closeModalNewKit">✕</button>
+      </div>
+      <div class="ca-modal-body">
+        <div class="ca-field">
+          <label class="ca-label">Veículo (rótulo) *</label>
+          <input id="caModalVehicle" class="ca-input" placeholder="Ex.: Renault Master L1H1">
+        </div>
+        <div class="ca-field">
+          <label class="ca-label">Código do kit *</label>
+          <input id="caModalKitCode" class="ca-input" placeholder="Ex.: 04.19-7706-HW">
+        </div>
+        <div class="ca-field">
+          <label class="ca-label">Descrição do kit</label>
+          <input id="caModalKitDesc" class="ca-input" placeholder="Ex.: Kit de Vidros Fixos">
+        </div>
+      </div>
+      <div class="ca-modal-footer">
+        <button type="button" class="ca-btn ca-btn-ghost" id="cancelModalNewKit">Cancelar</button>
+        <button type="button" class="ca-btn ca-btn-primary" id="createKitFromModal">Criar kit</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MODAL NOVA VARIANTE -->
+  <div id="caModalNewVariant" class="ca-modal-backdrop">
+    <div class="ca-modal">
+      <div class="ca-modal-header">
+        <div class="ca-modal-title">Nova variante</div>
+        <button type="button" class="ca-btn-icon" id="closeModalNewVariant">✕</button>
+      </div>
+      <div class="ca-modal-body">
+        <div class="ca-field">
+          <label class="ca-label">Nome da variante *</label>
+          <input id="caModalVariantName" class="ca-input" placeholder='Ex.: "Padrão", "Ambulância", "Escolar"'>
+          <div class="ca-help">Este nome aparecerá como filtro para o usuário final</div>
+        </div>
+      </div>
+      <div class="ca-modal-footer">
+        <button type="button" class="ca-btn ca-btn-ghost" id="cancelModalNewVariant">Cancelar</button>
+        <button type="button" class="ca-btn ca-btn-primary" id="createVariantFromModal">Criar variante</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL NOVA VIEW -->
+  <div id="caModalNewView" class="ca-modal-backdrop">
+    <div class="ca-modal">
+      <div class="ca-modal-header">
+        <div class="ca-modal-title">Nova view</div>
+        <button type="button" class="ca-btn-icon" id="closeModalNewView">✕</button>
+      </div>
+      <div class="ca-modal-body">
+        <div class="ca-field">
+          <label class="ca-label">Nome da view *</label>
+          <input id="caModalViewName" class="ca-input" placeholder='Ex.: "1 abertura", "2 aberturas"'>
+          <div class="ca-help">Este nome aparecerá como opção para o usuário escolher a configuração</div>
+        </div>
+      </div>
+      <div class="ca-modal-footer">
+        <button type="button" class="ca-btn ca-btn-ghost" id="cancelModalNewView">Cancelar</button>
+        <button type="button" class="ca-btn ca-btn-primary" id="createViewFromModal">Criar view</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMAÇÃO -->
+  <div id="caModalConfirm" class="ca-modal-backdrop ca-confirm-modal">
+    <div class="ca-modal" style="max-width:420px;">
+      <div class="ca-modal-header">
+        <div class="ca-modal-title">Confirmar</div>
+      </div>
+      <div class="ca-modal-body">
+        <p id="caConfirmMessage"></p>
+      </div>
+      <div class="ca-modal-footer">
+        <button type="button" class="ca-btn ca-btn-ghost" id="confirmNo">Cancelar</button>
+        <button type="button" class="ca-btn ca-btn-danger" id="confirmYes">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDITOR DE VIEWS E MARCAÇÕES -->
+  <div id="caEditorBackdrop" class="ca-editor-backdrop">
+    <div class="ca-editor">
+      <div class="ca-editor-header">
+        <div>
+          <div class="ca-editor-title" id="caEditorTitle">Editor de views</div>
+          <div class="ca-editor-subtitle">
+            <span id="caEditorVariantName">Variante</span> - Configure as views e marque os vidros
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="ca-editor-tabs" id="editorViewTabs"></div>
+          <button class="ca-btn ca-btn-secondary" id="editorAddView" style="font-size:12px;padding:6px 12px;">
+            + Nova view
+          </button>
+        </div>
+      </div>
+
+      <div class="ca-editor-body">
+        <div class="ca-editor-canvas-wrap">
+          <div id="caEditorModeBadge" class="ca-editor-mode-badge"></div>
+          <div class="ca-editor-canvas-inner" id="caEditorCanvasInner" style="display:none;">
+            <img id="caEditorImg" class="ca-editor-img" alt="View">
+            <div id="caEditorOverlay" class="ca-editor-overlay"></div>
+          </div>
+          <div id="caEditorPlaceholder" style="color:#9ca3af;font-size:14px;">
+            Faça upload das imagens na barra lateral →
+          </div>
+        </div>
+
+        <div class="ca-editor-sidebar">
+          <div class="ca-editor-sidebar-head">
+            <div class="ca-editor-sidebar-title">Marcações (<span id="caEditorHotspotCount">0</span>)</div>
+            <button class="ca-btn ca-btn-primary" style="font-size:12px;padding:6px 12px;" id="editorAddHotspot">
+              + Nova marcação
+            </button>
+          </div>
+
+          <div class="ca-editor-sidebar-body">
+            <!-- Upload da foto de apresentação da variante -->
+            <div class="ca-editor-upload" id="editorPresentationUploadBox">
+              <input type="file" id="caEditorPresentationInput" accept="image/*">
+              <label for="caEditorPresentationInput" class="ca-editor-upload-label">
+                <strong>Foto apresentação</strong> da variante (van sem marcações)
+              </label>
+              <div class="ca-editor-upload-actions" id="caEditorPresentationActions" style="display:none;">
+                <button type="button" class="ca-btn ca-btn-ghost" style="font-size:12px;padding:6px 12px;"
+                  id="editorRemovePresentation">
+                  🗑 Remover
+                </button>
+                <label for="caEditorPresentationInput" class="ca-btn ca-btn-primary"
+                  style="font-size:12px;padding:6px 12px;cursor:pointer;">
+                  📁 Trocar
+                </label>
+              </div>
+            </div>
+
+            <!-- Upload da imagem 2D -->
+            <div class="ca-editor-upload" id="editorImageUploadBox">
+              <input type="file" id="caEditorUploadInput" accept="image/*">
+              <label for="caEditorUploadInput" class="ca-editor-upload-label">
+                <strong>Clique aqui</strong> para fazer upload da imagem 2D (com marcações)
+              </label>
+              <div class="ca-editor-upload-actions" id="caEditorUploadActions" style="display:none;">
+                <button type="button" class="ca-btn ca-btn-ghost" style="font-size:12px;padding:6px 12px;"
+                  id="editorRemoveImage">
+                  🗑 Remover
+                </button>
+                <label for="caEditorUploadInput" class="ca-btn ca-btn-primary"
+                  style="font-size:12px;padding:6px 12px;cursor:pointer;">
+                  📁 Trocar
+                </label>
+              </div>
+            </div>
+
+            <div id="caEditorHotspotsList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ca-editor-footer">
+        <div id="caEditorDirty" class="ca-badge-dirty" style="display:none;">
+          Alterações não salvas
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="ca-btn ca-btn-danger" id="editorCancel">Cancelar</button>
+          <button class="ca-btn ca-btn-primary" id="editorSave">Salvar e voltar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+      console.log("[CatalogAdmin] Versão 3.2 (patch upload kit + defaultImage)");
+
+      const API_BASE = "http://localhost:8080/api/admin/catalog";
+      const API_ORIGIN = new URL(API_BASE).origin;
+
+      let allKits = [];
+      let currentKit = null;
+      let selectedVariantId = null;
+      let isDirty = false;
+
+      // Editor
+      let editorVariantId = null;
+      let editorViewId = null;
+      let editorImageDataUrl = {};        // { [viewId]: url (relativa /uploads/.. ou absoluta) }
+      let editorPresentationImg = {};     // { [variantId]: url }
+      let editorHotspots = {};            // { [viewId]: [{id,x,y,w,h,glassData}] }
+      let editorSelectedHotspot = null;   // index
+      let editorPreviewMode = "2d";       // '2d' | 'presentation'
+
+      // Confirm modal
+      let confirmCallback = null;
+
+      const el = {
+        get: (id) => document.getElementById(id),
+        getAll: (sel) => document.querySelectorAll(sel),
+      };
+
+      // -------------------------
+      // Helpers
+      // -------------------------
+      function clamp(n, min, max) {
+        return Math.max(min, Math.min(max, n));
+      }
+
+      function isAbsUrl(u) {
+        return /^https?:\/\//i.test(String(u || ""));
+      }
+
+      function toPreviewUrl(u) {
+        const s = String(u || "").trim();
+        if (!s) return "";
+        if (isAbsUrl(s)) return s;
+        if (s.startsWith("/")) return `${API_ORIGIN}${s}`;
+        return `${API_ORIGIN}/${s}`;
+      }
+
+
+      function slugify(str) {
+        return String(str || "")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]/g, "-")
+          .replace(/--+/g, "-")
+          .replace(/^-+|-+$/g, "");
+      }
+
+      function generateKitId(vehicleLabel, kitCode) {
+        const base = `${vehicleLabel}-${kitCode}`
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]/g, "-")
+          .replace(/--+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
+        let finalId = base;
+        let counter = 1;
+        while (allKits.some((k) => k.id === finalId)) {
+          finalId = `${base}-${counter}`;
+          counter++;
+        }
+        return finalId;
+      }
+
+      function showAlert(msg, type = "success") {
+        console.log(`[Alert ${type}]`, msg);
+        const box = el.get("caAlert");
+        if (!box) return;
+        box.textContent = msg;
+        box.className = `ca-alert show ${type === "error" ? "ca-alert-error" : "ca-alert-success"
+          }`;
+        setTimeout(() => box.classList.remove("show"), 4000);
+      }
+
+      function setDirty(flag) {
+        isDirty = flag;
+        const badge = el.get("caDirtyBadge");
+        if (badge) badge.style.display = flag ? "inline-flex" : "none";
+
+        const editorDirty = el.get("caEditorDirty");
+        if (editorDirty) editorDirty.style.display = flag ? "inline-flex" : "none";
+      }
+
+      function ensureAdmin() {
+        try {
+          const u = JSON.parse(localStorage.getItem("user"));
+          const s = String(u?.status ?? "").toUpperCase().replaceAll("_", "");
+          return (s === "ADMIN" || s === "ADMINCATALOGO");
+        } catch {
+          return false;
+        }
+      }
+
+
+      // SUBSTITUA o uploadFile por (REMOVE o credentials):
+      async function uploadFile(file) {
+        const fd = new FormData();
+        fd.append("file", file);
+
+        const res = await fetch(`${API_ORIGIN}/api/admin/files/upload`, {
+          method: "POST",
+          body: fd
+        });
+
+        const text = await res.text();
+        if (!res.ok) throw new Error(text || `HTTP ${res.status}`);
+
+        const json = JSON.parse(text);
+        return json.url;
+      }
+
+
+
+
+
+      function confirm(message, callback) {
+        console.log("[Confirm]", message);
+        const msgEl = el.get("caConfirmMessage");
+        const modal = el.get("caModalConfirm");
+        if (!msgEl || !modal) return;
+        msgEl.textContent = message;
+        modal.classList.add("ca-open");
+        confirmCallback = callback;
+      }
+
+      function normalizeSide(raw) {
+        const s = String(raw || "").trim().toUpperCase();
+        const allowed = new Set(["LD", "LE", "TD", "TE"]);
+        if (!s) return "";
+        if (allowed.has(s)) return s;
+        if (s.includes("DIREIT") || s === "D" || s.includes(" DIR")) return "LD";
+        if (s.includes("ESQUERD") || s === "E" || s.includes(" ESQ")) return "LE";
+        return null;
+      }
+
+      function validateKitBeforeSave(kit) {
+        const issues = [];
+        if (!kit?.vehicleLabel?.trim()) issues.push("Preencha o Veículo.");
+        if (!kit?.kit?.code?.trim()) issues.push("Preencha o Código do kit.");
+
+        const glasses = kit?.glasses || [];
+        for (let i = 0; i < glasses.length; i++) {
+          const g = glasses[i] || {};
+          const prefix = `Vidro #${i + 1}`;
+
+          if (!String(g.id || "").trim()) issues.push(`${prefix}: ID é obrigatório.`);
+          if (!String(g.model || "").trim()) issues.push(`${prefix}: Modelo é obrigatório.`);
+          if (!String(g.code || "").trim()) issues.push(`${prefix}: Código é obrigatório.`);
+          if (!String(g.desc || "").trim()) issues.push(`${prefix}: Descrição é obrigatória.`);
+          if (!String(g.position || "").trim()) issues.push(`${prefix}: Posição é obrigatória.`);
+          if (!String(g.dim || "").trim()) issues.push(`${prefix}: Dimensões é obrigatório.`);
+
+          const sideNorm = normalizeSide(g.side);
+          if (sideNorm === null) {
+            issues.push(`${prefix}: Lado inválido. Use LD/LE (ou TD/TE).`);
+          }
+          if (String(g.side || "").length > 20) issues.push(`${prefix}: Lado está muito grande.`);
+        }
+
+        // Bloqueia Base64 (evita "Data too long..." no MySQL)
+        const kitImg = kit?.defaultImage || kit?.presentationImage || "";
+        if (String(kitImg).startsWith("data:image/")) {
+          issues.push("Foto de apresentação do kit está em Base64. Use upload (gera /uploads/...).");
+        }
+
+        const variants = kit?.variants || [];
+        for (const v of variants) {
+          if (v?.presentationImage && String(v.presentationImage).startsWith("data:image/")) {
+            issues.push("Foto de apresentação da variante está em Base64. Use upload.");
+            break;
+          }
+          for (const vw of (v?.views || [])) {
+            if (vw?.image && String(vw.image).startsWith("data:image/")) {
+              issues.push("Imagem da view está em Base64. Use upload.");
+              break;
+            }
+          }
+        }
+
+        return issues;
+      }
+
+      function sanitizeKitForSave(kit) {
+        kit.vehicleLabel = String(kit.vehicleLabel || "").trim();
+        kit.kit = kit.kit || {};
+        kit.kit.code = String(kit.kit.code || "").trim();
+        kit.kit.desc = String(kit.kit.desc || "").trim();
+
+        kit.glasses = (kit.glasses || []).map((g) => {
+          const gg = { ...g };
+          gg.id = String(gg.id || "").trim();
+          gg.model = String(gg.model || "").trim();
+          gg.code = String(gg.code || "").trim();
+          gg.desc = String(gg.desc || "").trim();
+          gg.position = String(gg.position || "").trim();
+          gg.dim = String(gg.dim || "").trim();
+
+          const sideNorm = normalizeSide(gg.side);
+          gg.side = sideNorm || String(gg.side || "").trim().toUpperCase();
+          gg.options = (gg.options || []).map((x) => String(x).trim()).filter(Boolean);
+          return gg;
+        });
+
+        return kit;
+      }
+
+      // -------------------------
+      // API + Upload
+      // -------------------------
+      async function apiGet(path) {
+        const res = await fetch(`${API_BASE}${path}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      }
+
+
+      async function apiSaveKit(kit) {
+        const method = kit.id && kit.savedToServer ? "PUT" : "POST";
+        const url = kit.id && kit.savedToServer ? `/kits/${encodeURIComponent(kit.id)}` : "/kits";
+
+        // Evita travar a tela com payload gigante
+        console.log("[apiSaveKit] Method:", method, "URL:", url);
+
+        const kitToSend = JSON.parse(JSON.stringify(kit));
+        delete kitToSend.savedToServer;
+
+        // Backend salva a imagem do kit em defaultImage (CatalogKit.defaultImagePath)
+        kitToSend.defaultImage = kitToSend.defaultImage || kitToSend.presentationImage || "";
+        delete kitToSend.presentationImage;
+
+        const res = await fetch(`${API_BASE}${url}`, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(kitToSend),
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("[apiSaveKit] Erro:", res.status, errorText);
+          throw new Error(`HTTP ${res.status}: ${errorText}`);
+        }
+
+        return res.json();
+      }
+
+      async function apiDeleteKit(id) {
+        const res = await fetch(`${API_BASE}/kits/${encodeURIComponent(id)}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      }
+
+      // -------------------------
+      // List / Filters
+      // -------------------------
+      function applyFilters() {
+        const vehicle = el.get("caFilterVehicle")?.value || "";
+        const q = (el.get("caSearch")?.value || "").toLowerCase().trim();
+
+        return allKits.filter((k) => {
+          if (vehicle && k.vehicleLabel !== vehicle) return false;
+          const txt = [k.id, k.vehicleLabel, k.kit?.code, k.kit?.desc].join(" ").toLowerCase();
+          if (q && !txt.includes(q)) return false;
+          return true;
+        });
+      }
+
+      function populateVehicleFilter() {
+        const sel = el.get("caFilterVehicle");
+        if (!sel) return;
+
+        const values = Array.from(new Set(allKits.map((k) => k.vehicleLabel).filter(Boolean))).sort();
+        sel.innerHTML = '<option value="">Todos</option>';
+        values.forEach((v) => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v;
+          sel.appendChild(opt);
+        });
+      }
+
+      function renderList() {
+        const tbody = el.get("caKitTbody");
+        if (!tbody) return;
+
+        tbody.innerHTML = "";
+        const list = applyFilters();
+
+        const countEl = el.get("caCountKits");
+        if (countEl) countEl.textContent = String(list.length);
+
+        list.forEach((k) => {
+          const tr = document.createElement("tr");
+          tr.className = "ca-kit-row";
+          if (currentKit && currentKit.id === k.id) tr.classList.add("ca-active");
+          tr.addEventListener("click", () => loadKit(k.id));
+
+          tr.innerHTML = `
+            <td>${k.vehicleLabel || ""}</td>
+            <td>${k.kit?.code || ""}</td>
+            <td>${k.kit?.desc || ""}</td>
+            <td><span class="ca-chip">${k.id || "sem-id"}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // -------------------------
+      // Normalize kit
+      // -------------------------
+      function normalizeKit(kit) {
+        if (!kit) return null;
+
+        if (!kit.variants) kit.variants = [];
+        if (!kit.glasses) kit.glasses = [];
+
+        if (Array.isArray(kit.variants) && kit.variants.length > 0) {
+          if (kit.views) delete kit.views; // mata o legado pra não "ressuscitar" nomes
+          return kit;
+        }
+
+
+        kit.defaultImage = kit.defaultImage || kit.presentationImage || "";
+        kit.presentationImage = kit.presentationImage || kit.defaultImage || "";
+
+
+        // compat: se veio do backend como defaultImage, usa isso como imagem do kit
+        kit.defaultImage = kit.defaultImage || kit.presentationImage || "";
+        kit.presentationImage = kit.defaultImage || "";
+
+        if (kit.variants.length === 0) {
+          kit.variants.push({
+            id: "padrao",
+            name: "Padrão",
+            presentationImage: "",
+            views: [
+              { id: "sem-abertura", name: "Sem abertura", image: "", coordsPxByGlassId: {} },
+            ],
+          });
+        }
+
+        kit.variants.forEach((v) => {
+          v.id = v.id || slugify(v.name || "variante");
+          v.name = v.name || "Sem nome";
+          v.presentationImage = v.presentationImage || "";
+          if (!Array.isArray(v.views)) v.views = [];
+          if (v.views.length === 0) {
+            v.views.push({ id: "sem-abertura", name: "Sem abertura", image: "", coordsPxByGlassId: {} });
+          }
+          v.views.forEach((vw) => {
+            vw.id = vw.id || slugify(vw.name || "view");
+            vw.name = vw.name || "Sem nome";
+            vw.image = vw.image || "";
+            vw.coordsPxByGlassId = vw.coordsPxByGlassId || {};
+          });
+        });
+
+        return kit;
+      }
+
+      // -------------------------
+      // Form (kit)
+      // -------------------------
+      function setFormFromKit(kit) {
+        currentKit = kit ? JSON.parse(JSON.stringify(normalizeKit(kit))) : null;
+        selectedVariantId = null;
+
+        console.log("[setFormFromKit] kit.defaultImage:", kit?.defaultImage);
+        console.log("[setFormFromKit] variants:", kit?.variants?.map(v => ({ id: v.id, presentationImage: v.presentationImage })));
+
+        const titleEl = el.get("caFormTitle");
+        const statusEl = el.get("caFormStatus");
+        const delBtn = el.get("caDeleteKitBtn");
+        const variantsSection = el.get("caVariantsSection");
+        const glassesSection = el.get("caGlassesSection");
+
+        if (!kit) {
+          if (titleEl) titleEl.textContent = "Nenhum kit selecionado";
+          if (statusEl) statusEl.textContent = "Selecione um kit";
+          if (delBtn) delBtn.style.display = "none";
+          if (variantsSection) variantsSection.style.display = "none";
+          if (glassesSection) glassesSection.style.display = "none";
+
+          const idEl = el.get("caKitId");
+          const vehicleEl = el.get("caVehicleLabel");
+          const codeEl = el.get("caKitCode");
+          const descEl = el.get("caKitDesc");
+          if (idEl) idEl.value = "";
+          if (vehicleEl) vehicleEl.value = "";
+          if (codeEl) codeEl.value = "";
+          if (descEl) descEl.value = "";
+
+          renderPresentationImage("");
+          setDirty(false);
+          renderList();
+
+          const openEditorBtn = el.get("caOpenVariantEditorBtn");
+          if (openEditorBtn) openEditorBtn.style.display = "none";
+          return;
+        }
+
+        el.get("caKitId").value = kit.id || "";
+        el.get("caVehicleLabel").value = kit.vehicleLabel || "";
+        el.get("caKitCode").value = kit.kit?.code || "";
+        el.get("caKitDesc").value = kit.kit?.desc || "";
+
+        if (titleEl) titleEl.textContent = kit.kit?.code || "sem código";
+        if (statusEl) statusEl.textContent = kit.id ? `ID: ${kit.id}` : "Kit novo";
+        if (delBtn) delBtn.style.display = kit.id ? "inline-flex" : "none";
+        if (variantsSection) variantsSection.style.display = "flex";
+        if (glassesSection) glassesSection.style.display = "flex";
+
+        const firstVariantImg = kit.variants?.[0]?.presentationImage || '';
+        renderPresentationImage(kit.defaultImage || kit.presentationImage || firstVariantImg);
+
+        renderVariants(kit.variants);
+        renderGlasses(kit.glasses);
+        setDirty(false);
+        renderList();
+
+        const openEditorBtn = el.get("caOpenVariantEditorBtn");
+        if (openEditorBtn) openEditorBtn.style.display = "none";
+      }
+
+      function renderPresentationImage(imgUrl) {
+        const wrap = el.get("caPresentationImgWrap");
+        if (!wrap) return;
+
+        const u = toPreviewUrl(imgUrl);
+        console.log("renderPresentationImage - imgUrl:", imgUrl, "-> URL final:", u);
+
+        if (u) wrap.innerHTML = `<img src="${u}" alt="Foto apresentação" />`;
+        else wrap.innerHTML = '<div class="ca-presentation-img-placeholder">Nenhuma imagem carregada</div>';
+      }
+
+
+      function renderVariants(variants) {
+        const list = el.get("caVariantsList");
+        if (!list) return;
+        list.innerHTML = "";
+
+        (variants || []).forEach((v, idx) => {
+          const card = document.createElement("div");
+          card.className = "ca-variant-card";
+          if (selectedVariantId === v.id) card.classList.add("active");
+          card.addEventListener("click", () => selectVariant(v.id));
+
+          const head = document.createElement("div");
+          head.className = "ca-variant-head";
+          head.innerHTML = `
+            <div>
+              <div class="ca-variant-name">${v.name || "sem nome"}</div>
+              <div class="ca-variant-views-count">${(v.views || []).length} views</div>
+            </div>
+          `;
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "ca-btn-icon";
+          delBtn.type = "button";
+          delBtn.innerHTML = "🗑";
+          delBtn.title = "Remover variante";
+          delBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            confirm(`Remover variante "${v.name}"?`, (confirmed) => {
+              if (!confirmed) return;
+              currentKit.variants.splice(idx, 1);
+              if (selectedVariantId === v.id) selectedVariantId = null;
+              renderVariants(currentKit.variants);
+
+              const openEditorBtn = el.get("caOpenVariantEditorBtn");
+              if (openEditorBtn) openEditorBtn.style.display = selectedVariantId ? "inline-flex" : "none";
+
+              setDirty(true);
+            });
+          });
+
+          head.appendChild(delBtn);
+          card.appendChild(head);
+          list.appendChild(card);
+        });
+      }
+
+      function selectVariant(variantId) {
+        selectedVariantId = variantId;
+        renderVariants(currentKit.variants);
+
+        const openEditorBtn = el.get("caOpenVariantEditorBtn");
+        if (openEditorBtn) openEditorBtn.style.display = "inline-flex";
+      }
+
+      function renderGlasses(glasses) {
+        const wrap = el.get("caGlassList");
+        if (!wrap) return;
+        wrap.innerHTML = "";
+
+        (glasses || []).forEach((g, idx) => {
+          const div = document.createElement("div");
+          div.className = "ca-glass-item";
+
+          const head = document.createElement("div");
+          head.className = "ca-glass-head";
+          head.innerHTML = `
+            <div>
+              <div class="ca-glass-title">${g.model || "sem modelo"}</div>
+              <div class="ca-glass-id">ID: ${g.id || `glass-${idx}`}</div>
+            </div>
+          `;
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "ca-btn-icon";
+          delBtn.type = "button";
+          delBtn.innerHTML = "🗑";
+          delBtn.title = "Remover vidro";
+          delBtn.addEventListener("click", () => {
+            currentKit.glasses.splice(idx, 1);
+            renderGlasses(currentKit.glasses);
+            setDirty(true);
+          });
+
+          head.appendChild(delBtn);
+          div.appendChild(head);
+
+          const row1 = document.createElement("div");
+          row1.className = "ca-row-3-compact";
+          row1.innerHTML = `
+            <div class="ca-field">
+              <label class="ca-label">ID</label>
+              <input class="ca-input" value="${g.id || ""}" />
+            </div>
+            <div class="ca-field">
+              <label class="ca-label">Posição</label>
+              <input class="ca-input" value="${g.position || ""}" />
+            </div>
+            <div class="ca-field">
+              <label class="ca-label">Lado</label>
+              <input class="ca-input" value="${g.side || ""}" />
+            </div>
+          `;
+
+          const [idInput, posInput, sideInput] = row1.querySelectorAll(".ca-input");
+          idInput.addEventListener("input", (e) => {
+            g.id = e.target.value.trim();
+            setDirty(true);
+          });
+          posInput.addEventListener("input", (e) => {
+            g.position = e.target.value;
+            setDirty(true);
+          });
+          sideInput.addEventListener("input", (e) => {
+            g.side = e.target.value;
+            setDirty(true);
+          });
+
+          div.appendChild(row1);
+
+          const row2 = document.createElement("div");
+          row2.className = "ca-row-3-compact";
+          row2.innerHTML = `
+            <div class="ca-field">
+              <label class="ca-label">Modelo</label>
+              <input class="ca-input" value="${g.model || ""}" />
+            </div>
+            <div class="ca-field">
+              <label class="ca-label">Código</label>
+              <input class="ca-input" value="${g.code || ""}" />
+            </div>
+            <div class="ca-field">
+              <label class="ca-label">Dimensões</label>
+              <input class="ca-input" value="${g.dim || ""}" />
+            </div>
+          `;
+
+          const [modelInput, codeInput, dimInput] = row2.querySelectorAll(".ca-input");
+          modelInput.addEventListener("input", (e) => {
+            g.model = e.target.value;
+            setDirty(true);
+          });
+          codeInput.addEventListener("input", (e) => {
+            g.code = e.target.value;
+            setDirty(true);
+          });
+          dimInput.addEventListener("input", (e) => {
+            g.dim = e.target.value;
+            setDirty(true);
+          });
+
+          div.appendChild(row2);
+
+          const row3 = document.createElement("div");
+          row3.className = "ca-row-tags";
+          row3.innerHTML = `
+            <div class="ca-field">
+              <label class="ca-label">Descrição</label>
+              <input class="ca-input" value="${g.desc || ""}" />
+            </div>
+            <div class="ca-field">
+              <label class="ca-label">Opções (vírgula)</label>
+              <input class="ca-input" value="${(g.options || []).join(", ")}" />
+            </div>
+          `;
+
+          const [descInput, optInput] = row3.querySelectorAll(".ca-input");
+          descInput.addEventListener("input", (e) => {
+            g.desc = e.target.value;
+            setDirty(true);
+          });
+          optInput.addEventListener("input", (e) => {
+            g.options = e.target.value.split(",").map((s) => s.trim()).filter(Boolean);
+            setDirty(true);
+          });
+
+          div.appendChild(row3);
+          wrap.appendChild(div);
+        });
+      }
+
+      function collectFormToCurrentKit() {
+        if (!currentKit) {
+          currentKit = { kit: {}, variants: [], glasses: [], defaultImage: "" };
+        }
+        currentKit.id = el.get("caKitId").value.trim();
+        currentKit.segment = "CONVENCIONAL";
+        currentKit.vehicleLabel = el.get("caVehicleLabel").value.trim();
+        currentKit.kit = currentKit.kit || {};
+        currentKit.kit.code = el.get("caKitCode").value.trim();
+        currentKit.kit.desc = el.get("caKitDesc").value.trim();
+        currentKit.active = true;
+
+        // não mexe em defaultImage aqui; ele vem do upload
+      }
+
+      // -------------------------
+      // CRUD kits
+      // -------------------------
+      async function loadKit(id) {
+        console.log("[loadKit]", id);
+        try {
+          const localKit = allKits.find((k) => k.id === id);
+          if (localKit && !localKit.savedToServer) {
+            setFormFromKit(localKit);
+            return;
+          }
+
+          const full = await apiGet(`/kits/${encodeURIComponent(id)}`);
+          full.savedToServer = true;
+          setFormFromKit(full);
+        } catch (e) {
+          console.error("[loadKit] Erro:", e);
+          const localKit = allKits.find((k) => k.id === id);
+          if (localKit) setFormFromKit(localKit);
+          else showAlert("Erro ao carregar kit.", "error");
+        }
+      }
+
+      async function saveCurrentKit() {
+        console.log("[saveCurrentKit]");
+        try {
+          if (!currentKit) {
+            showAlert("Nenhum kit em edição.", "error");
+            return;
+          }
+
+          collectFormToCurrentKit();
+
+          const issues = validateKitBeforeSave(currentKit);
+          if (issues.length) {
+            showAlert(issues[0], "error");
+            console.warn("[validateKitBeforeSave]", issues);
+            return;
+          }
+
+          sanitizeKitForSave(currentKit);
+
+          const saved = await apiSaveKit(currentKit);
+          saved.savedToServer = true;
+
+          const idx = allKits.findIndex((k) => k.id === saved.id);
+          if (idx >= 0) allKits[idx] = saved;
+          else allKits.push(saved);
+
+          populateVehicleFilter();
+          setFormFromKit(saved);
+          showAlert("Kit salvo com sucesso!");
+        } catch (e) {
+          console.error("[saveCurrentKit] Erro:", e);
+          showAlert(`Erro ao salvar: ${e.message}`, "error");
+        }
+      }
+
+      async function deleteCurrentKit() {
+        if (!currentKit || !currentKit.id) return;
+
+        confirm(`Excluir o kit "${currentKit.kit?.code}"?`, async (confirmed) => {
+          if (!confirmed) return;
+          try {
+            await apiDeleteKit(currentKit.id);
+            allKits = allKits.filter((k) => k.id !== currentKit.id);
+            setFormFromKit(null);
+            populateVehicleFilter();
+            renderList();
+            showAlert("Kit excluído.");
+          } catch (e) {
+            console.error(e);
+            showAlert("Erro ao excluir kit.", "error");
+          }
+        });
+      }
+
+      function addGlass() {
+        if (!currentKit) return;
+        currentKit.glasses = currentKit.glasses || [];
+        currentKit.glasses.push({
+          id: "",
+          model: "",
+          code: "",
+          desc: "",
+          position: "",
+          side: "",
+          dim: "",
+          sortOrder: currentKit.glasses.length,
+          options: [],
+        });
+        renderGlasses(currentKit.glasses);
+        setDirty(true);
+      }
+
+      // -------------------------
+      // Modals (kit / variant / view)
+      // -------------------------
+      function openModalNewKit() {
+        el.get("caModalVehicle").value = "";
+        el.get("caModalKitCode").value = "";
+        el.get("caModalKitDesc").value = "";
+        el.get("caModalNewKit").classList.add("ca-open");
+      }
+      function closeModalNewKit() {
+        el.get("caModalNewKit").classList.remove("ca-open");
+      }
+      function createKitFromModal() {
+        const vehicle = el.get("caModalVehicle").value.trim();
+        const code = el.get("caModalKitCode").value.trim();
+        const desc = el.get("caModalKitDesc").value.trim();
+
+        if (!vehicle || !code) {
+          showAlert("Preencha veículo e código do kit.", "error");
+          return;
+        }
+
+        const newId = generateKitId(vehicle, code);
+
+        const newKit = {
+          id: newId,
+          segment: "CONVENCIONAL",
+          vehicleLabel: vehicle,
+          defaultImage: "",
+          kit: { code, desc },
+          glasses: [],
+          variants: [
+            {
+              id: "padrao",
+              name: "Padrão",
+              presentationImage: "",
+              views: [
+                { id: "sem-abertura", name: "Sem abertura", image: "", coordsPxByGlassId: {} },
+              ],
+            },
+          ],
+          active: true,
+          savedToServer: false,
+        };
+
+        allKits.push(newKit);
+        populateVehicleFilter();
+        renderList();
+        currentKit = JSON.parse(JSON.stringify(newKit));
+        setFormFromKit(currentKit);
+        closeModalNewKit();
+        showAlert('Kit criado! Configure e clique em "Salvar alterações".');
+      }
+
+      function openModalNewVariant() {
+        el.get("caModalVariantName").value = "";
+        el.get("caModalNewVariant").classList.add("ca-open");
+      }
+      function closeModalNewVariant() {
+        el.get("caModalNewVariant").classList.remove("ca-open");
+      }
+      function createVariantFromModal() {
+        const variantName = el.get("caModalVariantName").value.trim();
+        if (!variantName) {
+          showAlert("Preencha o nome da variante.", "error");
+          return;
+        }
+        if (!currentKit) {
+          showAlert("Nenhum kit em edição.", "error");
+          return;
+        }
+
+        const variantId = slugify(variantName);
+        if (currentKit.variants.find((v) => v.id === variantId)) {
+          showAlert("Já existe uma variante com este nome.", "error");
+          return;
+        }
+
+        currentKit.variants.push({
+          id: variantId,
+          name: variantName,
+          presentationImage: "",
+          views: [
+            { id: "sem-abertura", name: "Sem abertura", image: "", coordsPxByGlassId: {} },
+          ],
+        });
+
+        renderVariants(currentKit.variants);
+        selectVariant(variantId);
+        setDirty(true);
+        closeModalNewVariant();
+        showAlert(`Variante "${variantName}" criada!`);
+      }
+
+      function openModalNewView() {
+        el.get("caModalViewName").value = "";
+        el.get("caModalNewView").classList.add("ca-open");
+      }
+      function closeModalNewView() {
+        el.get("caModalNewView").classList.remove("ca-open");
+      }
+      function createViewFromModal() {
+        const viewName = el.get("caModalViewName").value.trim();
+        if (!viewName) {
+          showAlert("Preencha o nome da view.", "error");
+          return;
+        }
+        if (!editorVariantId) {
+          showAlert("Erro: variante não selecionada.", "error");
+          return;
+        }
+
+        const variant = currentKit.variants.find((v) => v.id === editorVariantId);
+        if (!variant) {
+          showAlert("Variante não encontrada.", "error");
+          return;
+        }
+
+        const viewId = slugify(viewName);
+        if (variant.views.find((v) => v.id === viewId)) {
+          showAlert("Já existe uma view com este nome nesta variante.", "error");
+          return;
+        }
+
+        variant.views.push({ id: viewId, name: viewName, image: "", coordsPxByGlassId: {} });
+        editorImageDataUrl[viewId] = "";
+        editorHotspots[viewId] = [];
+
+        closeModalNewView();
+        showAlert(`View "${viewName}" criada!`);
+        renderViewTabs(variant.views);
+        switchEditorView(viewId);
+        setDirty(true);
+      }
+
+      // -------------------------
+      // Editor: scale (natural <-> display)
+      // -------------------------
+      function getEditorScale() {
+        const img = el.get("caEditorImg");
+        const overlay = el.get("caEditorOverlay");
+
+        const dw = overlay?.clientWidth || 1;
+        const dh = overlay?.clientHeight || 1;
+
+        const nw = img?.naturalWidth || dw;
+        const nh = img?.naturalHeight || dh;
+
+        const sx = nw / dw;
+        const sy = nh / dh;
+
+        return { sx, sy, dw, dh, nw, nh };
+      }
+
+      // -------------------------
+      // Editor: open / tabs / preview
+      // -------------------------
+      function openVariantEditor() {
+        if (!selectedVariantId) {
+          showAlert("Selecione uma variante primeiro.", "error");
+          return;
+        }
+
+        const variant = currentKit.variants.find((v) => v.id === selectedVariantId);
+        if (!variant) return;
+
+        editorVariantId = selectedVariantId;
+        editorViewId = null;
+
+        editorImageDataUrl = {};
+        editorPresentationImg = {};
+        editorHotspots = {};
+
+        editorPresentationImg[selectedVariantId] = variant.presentationImage || "";
+        editorSelectedHotspot = null;
+        editorPreviewMode = "2d";
+
+        variant.views.forEach((v) => {
+          editorImageDataUrl[v.id] = v.image || "";
+          editorHotspots[v.id] = [];
+
+          const map = v.coordsPxByGlassId || {};
+          Object.keys(map).forEach((gid) => {
+            const box = map[gid] || {};
+            const glass = (currentKit.glasses || []).find((g) => g.id === gid);
+
+            editorHotspots[v.id].push({
+              id: gid,
+              x: box.x || 0,
+              y: box.y || 0,
+              w: box.w || 100,
+              h: box.h || 80,
+              glassData:
+                glass || {
+                  id: gid,
+                  model: "",
+                  code: "",
+                  desc: "",
+                  position: "",
+                  side: "",
+                  dim: "",
+                  options: [],
+                },
+            });
+          });
+        });
+
+        const title = el.get("caEditorTitle");
+        const vname = el.get("caEditorVariantName");
+        if (title) title.textContent = `Editor: ${currentKit.kit?.code || "Kit"}`;
+        if (vname) vname.textContent = variant.name || "";
+
+        el.get("caEditorBackdrop").classList.add("ca-open");
+
+        renderViewTabs(variant.views);
+        if (variant.views.length > 0) switchEditorView(variant.views[0].id);
+        else {
+          updateEditorPreview();
+          renderEditorHotspots();
+        }
+
+
+        updatePresentationUploadBox();
+      }
+
+      function updatePresentationUploadBox() {
+        const actions = el.get("caEditorPresentationActions");
+        if (!actions) return;
+
+        const hasImg = !!(editorVariantId && editorPresentationImg?.[editorVariantId]);
+        actions.style.display = hasImg ? "flex" : "none";
+      }
+
+
+      function renderViewTabs(views) {
+        const tabs = el.get("editorViewTabs");
+        if (!tabs) return;
+        tabs.innerHTML = "";
+
+        (views || []).forEach((v) => {
+          const btn = document.createElement("button");
+          btn.className = "ca-editor-tab";
+          btn.textContent = v.name || "Sem nome";
+          btn.dataset.viewId = v.id;
+          btn.addEventListener("click", () => switchEditorView(v.id));
+
+          if ((views || []).length > 1) {
+            const delSpan = document.createElement("span");
+            delSpan.className = "ca-editor-tab-delete";
+            delSpan.innerHTML = "×";
+            delSpan.title = "Remover view";
+
+            delSpan.addEventListener("click", (e) => {
+              e.stopPropagation();
+              confirm(`Remover view "${v.name}"?`, (confirmed) => {
+                if (!confirmed) return;
+
+                const variant = currentKit.variants.find((vr) => vr.id === editorVariantId);
+                if (!variant) return;
+
+                const idx = variant.views.findIndex((vw) => vw.id === v.id);
+                if (idx >= 0) variant.views.splice(idx, 1);
+
+                delete editorImageDataUrl[v.id];
+                delete editorHotspots[v.id];
+
+                renderViewTabs(variant.views);
+
+                if (editorViewId === v.id) {
+                  if (variant.views.length > 0) switchEditorView(variant.views[0].id);
+                  else {
+                    editorViewId = null;
+                    updateEditorPreview();
+                    renderEditorHotspots();
+                  }
+                }
+
+                setDirty(true);
+              });
+            });
+
+            btn.appendChild(delSpan);
+          }
+
+          tabs.appendChild(btn);
+        });
+      }
+
+      function updateEditorPreview() {
+        const inner = el.get("caEditorCanvasInner");
+        const placeholder = el.get("caEditorPlaceholder");
+        const img = el.get("caEditorImg");
+        const overlay = el.get("caEditorOverlay");
+        const badge = el.get("caEditorModeBadge");
+
+        let imgUrl = "";
+
+        if (editorPreviewMode === "presentation") {
+          imgUrl = editorPresentationImg[editorVariantId] || "";
+          if (badge) badge.textContent = "Foto de apresentação";
+          if (overlay) overlay.style.display = "none";
+        } else {
+          imgUrl = editorImageDataUrl[editorViewId] || "";
+          if (badge) badge.textContent = "Imagem 2D com marcações";
+          if (overlay) overlay.style.display = "block";
+        }
+
+        const u = toPreviewUrl(imgUrl);
+        if (u) {
+          if (img) img.src = u;
+          if (inner) inner.style.display = "inline-block";
+          if (placeholder) placeholder.style.display = "none";
+          if (badge) badge.style.display = "block";
+        } else {
+          if (inner) inner.style.display = "none";
+          if (placeholder) placeholder.style.display = "block";
+          if (badge) badge.style.display = "none";
+        }
+      }
+
+      function switchEditorView(viewId) {
+        editorViewId = viewId;
+        editorPreviewMode = "2d";
+        editorSelectedHotspot = null;
+
+        el.getAll(".ca-editor-tab").forEach((t) => {
+          t.classList.toggle("active", t.dataset.viewId === viewId);
+        });
+
+        const uploadActions = el.get("caEditorUploadActions");
+        const presentationActions = el.get("caEditorPresentationActions");
+
+        if (uploadActions) uploadActions.style.display = editorImageDataUrl[viewId] ? "flex" : "none";
+        if (presentationActions) presentationActions.style.display = editorPresentationImg[editorVariantId] ? "flex" : "none";
+
+        el.get("editorImageUploadBox")?.classList.remove("active");
+        el.get("editorPresentationUploadBox")?.classList.remove("active");
+
+        updateEditorPreview();
+        renderEditorHotspots();
+      }
+
+      // -------------------------
+      // Editor: uploads (via /upload)
+      // -------------------------
+      async function handleEditorUpload(event) {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+          showAlert("Enviando imagem da view...", "success");
+          const url = await uploadFile(file);
+
+          editorImageDataUrl[editorViewId] = url;
+          event.target.value = "";
+          editorPreviewMode = "2d";
+          switchEditorView(editorViewId);
+          setDirty(true);
+
+          showAlert("Imagem da view enviada!", "success");
+        } catch (e) {
+          console.error(e);
+          showAlert(e.message, "error");
+        }
+      }
+
+      async function handlePresentationUpload(event) {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+          showAlert("Enviando foto de apresentação...", "success");
+          const url = await uploadFile(file);
+
+          editorPresentationImg[editorVariantId] = url;
+          event.target.value = "";
+          editorPreviewMode = "presentation";
+          updateEditorPreview();
+
+          const actions = el.get("caEditorPresentationActions");
+          if (actions) actions.style.display = "flex";
+
+          setDirty(true);
+          showAlert("Foto de apresentação enviada!", "success");
+        } catch (e) {
+          console.error(e);
+          showAlert(e.message, "error");
+        }
+      }
+
+
+      function removeEditorImage() {
+        confirm("Remover a imagem desta view?", (confirmed) => {
+          if (!confirmed) return;
+          editorImageDataUrl[editorViewId] = "";
+          switchEditorView(editorViewId);
+          setDirty(true);
+        });
+      }
+
+      function removeEditorPresentation() {
+        confirm("Remover a foto de apresentação?", (confirmed) => {
+          if (!confirmed) return;
+          editorPresentationImg[editorVariantId] = "";
+          editorPreviewMode = "2d";
+          updateEditorPreview();
+          el.get("caEditorPresentationActions").style.display = "none";
+          setDirty(true);
+        });
+      }
+
+      // -------------------------
+      // Editor: criar marcação arrastando
+      // -------------------------
+      function startEditorDrag(e) {
+        const overlay = el.get("caEditorOverlay");
+        if (!overlay) return;
+        if (editorPreviewMode !== "2d") return;
+        if (!editorViewId) return;
+        if (e.target !== overlay) return;
+
+        const overlayRect = overlay.getBoundingClientRect();
+        const { sx, sy, nw, nh } = getEditorScale();
+
+        const startX = (e.clientX - overlayRect.left) * sx;
+        const startY = (e.clientY - overlayRect.top) * sy;
+
+        const hs = {
+          id: "",
+          x: clamp(startX, 0, nw),
+          y: clamp(startY, 0, nh),
+          w: 0,
+          h: 0,
+          glassData: {
+            id: "",
+            model: "",
+            code: "",
+            desc: "",
+            position: "",
+            side: "",
+            dim: "",
+            options: [],
+          },
+        };
+
+        const temp = document.createElement("div");
+        temp.className = "ca-hotspot-rect dragging";
+        overlay.appendChild(temp);
+
+        function syncTemp() {
+          const { sx: sx2, sy: sy2 } = getEditorScale();
+          temp.style.left = `${(hs.x || 0) / sx2}px`;
+          temp.style.top = `${(hs.y || 0) / sy2}px`;
+          temp.style.width = `${(hs.w || 0) / sx2}px`;
+          temp.style.height = `${(hs.h || 0) / sy2}px`;
+        }
+
+        function onMove(e2) {
+          const { sx: sx2, sy: sy2, nw: nw2, nh: nh2 } = getEditorScale();
+          const x2 = (e2.clientX - overlayRect.left) * sx2;
+          const y2 = (e2.clientY - overlayRect.top) * sy2;
+
+          const xA = clamp(startX, 0, nw2);
+          const yA = clamp(startY, 0, nh2);
+          const xB = clamp(x2, 0, nw2);
+          const yB = clamp(y2, 0, nh2);
+
+          hs.x = Math.min(xA, xB);
+          hs.y = Math.min(yA, yB);
+          hs.w = Math.abs(xB - xA);
+          hs.h = Math.abs(yB - yA);
+
+          syncTemp();
+        }
+
+        function onUp() {
+          document.removeEventListener("mousemove", onMove);
+          document.removeEventListener("mouseup", onUp);
+
+          temp.remove();
+          if ((hs.w || 0) < 10 || (hs.h || 0) < 10) return;
+
+          if (!editorHotspots[editorViewId]) editorHotspots[editorViewId] = [];
+          editorHotspots[editorViewId].push(hs);
+          editorSelectedHotspot = editorHotspots[editorViewId].length - 1;
+
+          setDirty(true);
+          renderEditorHotspots();
+        }
+
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+        syncTemp();
+      }
+
+      // -------------------------
+      // Editor: render hotspots
+      // -------------------------
+      function renderEditorHotspots() {
+        const overlay = el.get("caEditorOverlay");
+        const list = el.get("caEditorHotspotsList");
+        if (!overlay || !list) return;
+
+        overlay.innerHTML = "";
+        list.innerHTML = "";
+
+        if (!editorViewId) {
+          const countEl = el.get("caEditorHotspotCount");
+          if (countEl) countEl.textContent = "0";
+          return;
+        }
+
+        if (!editorHotspots[editorViewId]) editorHotspots[editorViewId] = [];
+        const hotspots = editorHotspots[editorViewId];
+
+        const countEl = el.get("caEditorHotspotCount");
+        if (countEl) countEl.textContent = String(hotspots.length);
+
+        if (editorPreviewMode !== "2d") return;
+
+        const { sx, sy } = getEditorScale();
+
+        hotspots.forEach((hs, idx) => {
+          hs.glassData = hs.glassData || {
+            id: hs.id || "",
+            model: "",
+            code: "",
+            desc: "",
+            position: "",
+            side: "",
+            dim: "",
+            options: [],
+          };
+          hs.glassData.options = Array.isArray(hs.glassData.options) ? hs.glassData.options : [];
+
+          const rect = document.createElement("div");
+          rect.className = "ca-hotspot-rect";
+          rect.dataset.hotspotIndex = String(idx);
+
+          rect.style.left = `${(hs.x || 0) / sx}px`;
+          rect.style.top = `${(hs.y || 0) / sy}px`;
+          rect.style.width = `${(hs.w || 0) / sx}px`;
+          rect.style.height = `${(hs.h || 0) / sy}px`;
+
+          if (editorSelectedHotspot === idx) rect.classList.add("selected");
+
+          const label = document.createElement("div");
+          label.className = "ca-hotspot-label";
+          label.textContent = hs.glassData.model || hs.id || `H${idx + 1}`;
+          rect.appendChild(label);
+
+          rect.addEventListener("mousedown", (e) => {
+            e.stopPropagation();
+            editorSelectedHotspot = idx;
+            setDirty(true);
+
+            const startClientX = e.clientX;
+            const startClientY = e.clientY;
+            const startHsX = hs.x || 0;
+            const startHsY = hs.y || 0;
+
+            rect.classList.add("dragging");
+            document.body.style.cursor = "move";
+
+            function onMove(e2) {
+              const dxDisp = e2.clientX - startClientX;
+              const dyDisp = e2.clientY - startClientY;
+
+              const { sx: sx2, sy: sy2, nw: nw2, nh: nh2 } = getEditorScale();
+
+              hs.x = clamp(startHsX + dxDisp * sx2, 0, (nw2 || 999999) - (hs.w || 0));
+              hs.y = clamp(startHsY + dyDisp * sy2, 0, (nh2 || 999999) - (hs.h || 0));
+
+              rect.style.left = `${(hs.x || 0) / sx2}px`;
+              rect.style.top = `${(hs.y || 0) / sy2}px`;
+            }
+
+            function onUp() {
+              document.removeEventListener("mousemove", onMove);
+              document.removeEventListener("mouseup", onUp);
+              rect.classList.remove("dragging");
+              document.body.style.cursor = "";
+              renderEditorHotspots();
+            }
+
+            document.addEventListener("mousemove", onMove);
+            document.addEventListener("mouseup", onUp);
+          });
+
+          overlay.appendChild(rect);
+
+          const card = document.createElement("div");
+          card.className = "ca-hotspot-card";
+          card.dataset.cardIndex = String(idx);
+          if (editorSelectedHotspot === idx) card.classList.add("selected");
+
+          card.addEventListener("click", (e) => {
+            if (e.target.closest("input") || e.target.closest("button")) return;
+            editorSelectedHotspot = idx;
+            renderEditorHotspots();
+          });
+
+          const cardHead = document.createElement("div");
+          cardHead.className = "ca-hotspot-card-head";
+
+          const titleText = hs.glassData.model || "Marcação";
+          const idText = hs.id || "";
+
+          cardHead.innerHTML = `
+            <div style="flex:1">
+              <div class="ca-hotspot-card-title">${titleText}</div>
+              <div class="ca-hotspot-card-id">ID: ${idText}</div>
+            </div>
+          `;
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "ca-btn-icon";
+          delBtn.type = "button";
+          delBtn.innerHTML = "×";
+          delBtn.title = "Remover marcação";
+          delBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            hotspots.splice(idx, 1);
+            if (editorSelectedHotspot === idx) editorSelectedHotspot = null;
+            setDirty(true);
+            renderEditorHotspots();
+          });
+
+          cardHead.appendChild(delBtn);
+          card.appendChild(cardHead);
+
+          const fields = document.createElement("div");
+          fields.className = "ca-hotspot-fields";
+
+          fields.innerHTML = `
+            <div class="ca-field">
+              <label class="ca-label">ID</label>
+              <input class="ca-input" data-k="id" value="${hs.id || ""}" />
+            </div>
+  
+            <div class="ca-field">
+              <label class="ca-label">MODELO</label>
+              <input class="ca-input" data-k="model" value="${hs.glassData.model || ""}" />
+            </div>
+  
+            <div class="ca-field">
+              <label class="ca-label">CÓDIGO</label>
+              <input class="ca-input" data-k="code" value="${hs.glassData.code || ""}" />
+            </div>
+  
+            <div class="ca-field">
+              <label class="ca-label">DESCRIÇÃO</label>
+              <input class="ca-input" data-k="desc" value="${hs.glassData.desc || ""}" />
+            </div>
+  
+            <div class="ca-field">
+              <label class="ca-label">POSIÇÃO</label>
+              <input class="ca-input" data-k="position" value="${hs.glassData.position || ""}" />
+            </div>
+  
+            <div class="ca-field">
+              <label class="ca-label">LADO</label>
+              <input class="ca-input" data-k="side" value="${hs.glassData.side || ""}" />
+            </div>
+  
+            <div class="ca-field">
+              <label class="ca-label">DIMENSÕES</label>
+              <input class="ca-input" data-k="dim" value="${hs.glassData.dim || ""}" />
+            </div>
+  
+            <div class="ca-field">
+              <label class="ca-label">OPÇÕES (VÍRGULA)</label>
+              <input class="ca-input" data-k="options" value="${(hs.glassData.options || []).join(", ")}" />
+            </div>
+          `;
+
+          const headTitleEl = cardHead.querySelector(".ca-hotspot-card-title");
+          const headIdEl = cardHead.querySelector(".ca-hotspot-card-id");
+
+          fields.querySelectorAll("input.ca-input").forEach((inp) => {
+            inp.addEventListener("input", (e) => {
+              const k = e.target.dataset.k;
+              const v = e.target.value;
+
+              if (k === "id") {
+                hs.id = v.trim();
+                hs.glassData.id = hs.id;
+                if (headIdEl) headIdEl.textContent = `ID: ${hs.id || ""}`;
+                label.textContent = hs.glassData.model || hs.id || `H${idx + 1}`;
+                setDirty(true);
+                return;
+              }
+
+              if (k === "options") {
+                hs.glassData.options = v.split(",").map((s) => s.trim()).filter(Boolean);
+                setDirty(true);
+                return;
+              }
+
+              hs.glassData[k] = v;
+              if (k === "model") {
+                if (headTitleEl) headTitleEl.textContent = v || "Marcação";
+                label.textContent = v || hs.id || `H${idx + 1}`;
+              }
+              setDirty(true);
+            });
+          });
+
+          card.appendChild(fields);
+          list.appendChild(card);
+        });
+      }
+
+      function addHotspot() {
+        if (!editorViewId) {
+          showAlert("Selecione/crie uma view primeiro.", "error");
+          return;
+        }
+        if (!editorHotspots[editorViewId]) editorHotspots[editorViewId] = [];
+
+        const { sx, sy, nw, nh } = getEditorScale();
+
+        editorHotspots[editorViewId].push({
+          id: "",
+          x: clamp(50 * sx, 0, nw),
+          y: clamp(50 * sy, 0, nh),
+          w: clamp(120 * sx, 0, nw),
+          h: clamp(90 * sy, 0, nh),
+          glassData: { id: "", model: "Nova marcação", code: "", desc: "", position: "", side: "", dim: "", options: [] },
+        });
+
+        editorSelectedHotspot = editorHotspots[editorViewId].length - 1;
+        setDirty(true);
+        renderEditorHotspots();
+      }
+
+      function saveAndCloseEditor() {
+        const variant = currentKit.variants.find((v) => v.id === editorVariantId);
+        if (!variant) return;
+
+        // valida IDs (obrigatório)
+        for (const vw of variant.views) {
+          const hsList = editorHotspots[vw.id] || [];
+          const ids = hsList.map((h) => String(h.id || "").trim());
+          if (ids.some((id) => !id)) {
+            showAlert('Existe marcação sem "ID". Preencha o ID antes de salvar.', "error");
+            return;
+          }
+          const setIds = new Set(ids);
+          if (setIds.size !== ids.length) {
+            showAlert(`Existem IDs duplicados na view "${vw.name}".`, "error");
+            return;
+          }
+        }
+
+        variant.presentationImage = editorPresentationImg[editorVariantId] || "";
+
+        currentKit.glasses = currentKit.glasses || [];
+
+        // sync glasses a partir das marcações
+        variant.views.forEach((vw) => {
+          const hsList = editorHotspots[vw.id] || [];
+          hsList.forEach((hs) => {
+            hs.glassData = hs.glassData || {};
+            hs.glassData.id = hs.id;
+
+            const idx = currentKit.glasses.findIndex((g) => g.id === hs.id);
+            if (idx >= 0) currentKit.glasses[idx] = { ...currentKit.glasses[idx], ...hs.glassData, id: hs.id };
+            else currentKit.glasses.push({ ...hs.glassData, id: hs.id });
+          });
+        });
+
+        // grava coords por glassId
+        variant.views.forEach((vw) => {
+          vw.image = editorImageDataUrl[vw.id] || "";
+          vw.coordsPxByGlassId = {};
+
+          const hsList = editorHotspots[vw.id] || [];
+          hsList.forEach((hs) => {
+            vw.coordsPxByGlassId[hs.id] = {
+              x: Math.round(hs.x || 0),
+              y: Math.round(hs.y || 0),
+              w: Math.round(hs.w || 0),
+              h: Math.round(hs.h || 0),
+            };
+          });
+        });
+
+        el.get("caEditorBackdrop").classList.remove("ca-open");
+        renderGlasses(currentKit.glasses);
+
+        setDirty(true);
+        showAlert('Alterações do editor salvas! Clique em "Salvar alterações" para persistir.');
+      }
+
+      function cancelEditor() {
+        confirm("Descartar alterações do editor?", (confirmed) => {
+          if (!confirmed) return;
+          el.get("caEditorBackdrop").classList.remove("ca-open");
+        });
+      }
+
+      // -------------------------
+      // Events
+      // -------------------------
+      function bindEvents() {
+        el.get("caFilterVehicle")?.addEventListener("change", renderList);
+        el.get("caSearch")?.addEventListener("input", renderList);
+
+        el.get("caNewKitBtn")?.addEventListener("click", openModalNewKit);
+        el.get("closeModalNewKit")?.addEventListener("click", closeModalNewKit);
+        el.get("cancelModalNewKit")?.addEventListener("click", closeModalNewKit);
+        el.get("createKitFromModal")?.addEventListener("click", createKitFromModal);
+
+        el.get("caSaveKitBtn")?.addEventListener("click", saveCurrentKit);
+        el.get("caDeleteKitBtn")?.addEventListener("click", deleteCurrentKit);
+
+        el.get("caAddGlassBtn")?.addEventListener("click", addGlass);
+
+        el.get("caAddVariantBtn")?.addEventListener("click", openModalNewVariant);
+        el.get("closeModalNewVariant")?.addEventListener("click", closeModalNewVariant);
+        el.get("cancelModalNewVariant")?.addEventListener("click", closeModalNewVariant);
+        el.get("createVariantFromModal")?.addEventListener("click", createVariantFromModal);
+
+        el.get("caOpenVariantEditorBtn")?.addEventListener("click", openVariantEditor);
+
+        el.get("editorAddView")?.addEventListener("click", openModalNewView);
+        el.get("closeModalNewView")?.addEventListener("click", closeModalNewView);
+        el.get("cancelModalNewView")?.addEventListener("click", closeModalNewView);
+        el.get("createViewFromModal")?.addEventListener("click", createViewFromModal);
+
+        el.get("caEditorUploadInput")?.addEventListener("change", handleEditorUpload);
+        el.get("caEditorPresentationInput")?.addEventListener("change", handlePresentationUpload);
+
+        // ===== Alternância de preview clicando nas caixas (SEM abrir file picker) =====
+        el.get("editorPresentationUploadBox")?.addEventListener("click", (e) => {
+          // Se clicou no label/input/botão, deixa o comportamento normal (abrir file picker / remover / trocar)
+          if (
+            e.target.tagName === "INPUT" ||
+            e.target.tagName === "BUTTON" ||
+            e.target.closest("label")
+          ) return;
+
+          // Só alterna se existe imagem de apresentação
+          if (!editorPresentationImg?.[editorVariantId]) return;
+
+          editorPreviewMode = "presentation";
+
+          el.get("editorPresentationUploadBox")?.classList.add("active");
+          el.get("editorImageUploadBox")?.classList.remove("active");
+
+          updateEditorPreview();
+          renderEditorHotspots();
+        });
+
+        el.get("editorImageUploadBox")?.addEventListener("click", (e) => {
+          if (
+            e.target.tagName === "INPUT" ||
+            e.target.tagName === "BUTTON" ||
+            e.target.closest("label")
+          ) return;
+
+          // Precisa ter uma view selecionada pra mostrar 2D
+          if (!editorViewId) return;
+
+          // Só alterna se existe imagem 2D nessa view
+          if (!editorImageDataUrl?.[editorViewId]) return;
+
+          editorPreviewMode = "2d";
+
+          el.get("editorImageUploadBox")?.classList.add("active");
+          el.get("editorPresentationUploadBox")?.classList.remove("active");
+
+          // mantém tab ativa como estiver (não mexe nas tabs aqui)
+          updateEditorPreview();
+          renderEditorHotspots();
+        });
+        // ===========================================================================
+
+        el.get("editorRemoveImage")?.addEventListener("click", removeEditorImage);
+        el.get("editorRemovePresentation")?.addEventListener("click", removeEditorPresentation);
+
+        el.get("editorAddHotspot")?.addEventListener("click", addHotspot);
+        el.get("editorSave")?.addEventListener("click", saveAndCloseEditor);
+        el.get("editorCancel")?.addEventListener("click", cancelEditor);
+
+        el.get("caEditorOverlay")?.addEventListener("mousedown", startEditorDrag);
+
+        // confirm modal
+        el.get("confirmNo")?.addEventListener("click", () => {
+          el.get("caModalConfirm").classList.remove("ca-open");
+          if (confirmCallback) confirmCallback(false);
+          confirmCallback = null;
+        });
+        el.get("confirmYes")?.addEventListener("click", () => {
+          el.get("caModalConfirm").classList.remove("ca-open");
+          if (confirmCallback) confirmCallback(true);
+          confirmCallback = null;
+        });
+
+        // logout
+        el.get("logoutBtn")?.addEventListener("click", () => {
+          localStorage.removeItem("user");
+          window.location.href = "admin-login.html";
+        });
+
+        // dirty on inputs
+        el.get("caVehicleLabel")?.addEventListener("input", () => setDirty(true));
+        el.get("caKitCode")?.addEventListener("input", () => setDirty(true));
+        el.get("caKitDesc")?.addEventListener("input", () => setDirty(true));
+
+        // upload foto apresentação do kit (fora do editor) -> via /upload
+        el.get("caPresentationImgInput")?.addEventListener("change", async (e) => {
+          console.log("1. Upload iniciado");
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          try {
+            console.log("2. Chamando uploadFile");
+            const url = await uploadFile(file);
+            console.log("3. Upload OK, url:", url);
+
+            currentKit.defaultImage = url;
+            currentKit.presentationImage = url;
+
+            console.log("4. Chamando renderPresentationImage");
+            renderPresentationImage(url);
+
+            console.log("5. Chamando setDirty");
+            setDirty(true);
+
+            console.log("6. Upload completo!");
+          } catch (err) {
+            console.error("ERRO:", err);
+            showAlert("Erro ao subir imagem: " + err.message, "error");
+          } finally {
+            e.target.value = "";
+          }
+        });
+      }
+
+
+      // -------------------------
+      // Boot
+      // -------------------------
+      async function boot() {
+        console.log("boot Iniciando...");
+        if (!ensureAdmin()) {
+          window.location.href = "admin-login.html";
+          return;
+        }
+
+        try {
+          allKits = await apiGet("/kits");
+          allKits.forEach(k => k.savedToServer = true);
+          console.log("[boot] Kits carregados:", allKits.length);
+        } catch (e) {
+          console.error("[boot] Erro ao carregar kits:", e);
+          allKits = [];
+        }
+
+        populateVehicleFilter();
+        renderList();
+        bindEvents();
+
+        console.log("[boot] Boot completo!");
+      }
+
+      boot();
+    })();
+  </script>
+</body>
+
+</html>
