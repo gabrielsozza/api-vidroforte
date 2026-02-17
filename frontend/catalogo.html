@@ -20,11 +20,7 @@
       <nav class="vf-nav" id="vf-nav" aria-label="Menu principal" data-nav>
         <div class="vf-navLinks">
           <a class="vf-nav__link" href="/">Home</a>
-          <a class="vf-nav__link" href="/quem-somos">Quem Somos</a>
-          <a class="vf-nav__link" href="/mercados">Mercados</a>
           <a class="vf-nav__link" href="/catalogo" aria-current="page">Catálogo</a>
-          <a class="vf-nav__link" href="/certificados">Certificados</a>
-          <a class="vf-nav__link" href="/trabalhe-conosco">Trabalhe Conosco</a>
         </div>
 
         <div class="vf-navAuth auth-container">
@@ -86,23 +82,20 @@
                     <option value="">Todas</option>
                     <!-- o JS vai preencher automaticamente com Fiat, Mercedes, Renault... -->
                   </select>
-              
+
                   <div class="vf-search-inputWrap">
                     <svg class="vf-search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
                       <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"></circle>
                       <path d="M11 11L14.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
                     </svg>
-                    <input type="text"
-                           class="vf-search-input"
-                           placeholder="Pesquisar kit..."
-                           data-search>
+                    <input type="text" class="vf-search-input" placeholder="Pesquisar kit..." data-search>
                   </div>
                 </div>
-              
+
                 <!-- (opcional) uma linha de ajuda -->
                 <!-- <div class="vf-search-hint">Escolha a montadora e digite o modelo.</div> -->
               </div>
-              
+
 
               <ul class="vf-options-list" data-options></ul>
             </div>
@@ -198,24 +191,32 @@
           </div>
 
           <!-- ADICIONE AQUI O BOTÃO PDF -->
-          <button id="btnDownloadPdf" onclick="baixarPDF()" style="
-              background: #1b5e20; 
-              color: white; 
-              padding: 14px 24px; 
-              border: none; 
-              border-radius: 8px; 
-              font-weight: 600; 
-              font-size: 15px;
-              cursor: pointer; 
-              margin-top: 20px; 
-              width: 100%;
-              display: none;
-              transition: all 0.3s ease;
-            " onmouseover="this.style.background='#2e7d32'" onmouseout="this.style.background='#1b5e20'">
-            📄 Baixar Informações em PDF
-          </button>
+          <!-- ARQUIVOS (PDF + PARASOLID) -->
+          <div id="filesBox" style="margin-top:20px; display:none;">
+            <button id="btnDownloadPdf" style="
+      background:#1b5e20;color:white;padding:14px 24px;border:none;border-radius:8px;
+      font-weight:600;font-size:15px;cursor:pointer;width:100%;transition:all .3s ease;
+      margin-bottom:10px;
+    " onmouseover="this.style.background='#2e7d32'" onmouseout="this.style.background='#1b5e20'">
+              📄 Baixar PDF do vidro
+            </button>
 
-        </div>
+            <button id="btnDownloadXt" style="
+      background:#111827;color:white;padding:14px 24px;border:none;border-radius:8px;
+      font-weight:600;font-size:15px;cursor:pointer;width:100%;transition:all .3s ease;
+      margin-bottom:10px;
+    " onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+              📐 Baixar Parasolid (.x_t)
+            </button>
+
+            <button id="btnDownloadXb" style="
+      background:#111827;color:white;padding:14px 24px;border:none;border-radius:8px;
+      font-weight:600;font-size:15px;cursor:pointer;width:100%;transition:all .3s ease;
+    " onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+              📐 Baixar Parasolid (.x_b)
+            </button>
+          </div>
+
       </aside>
     </main>
   </div>

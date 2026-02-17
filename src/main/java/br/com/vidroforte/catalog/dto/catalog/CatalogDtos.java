@@ -14,15 +14,19 @@ import br.com.vidroforte.catalog.model.catalog.CatalogSegment;
 
 public final class CatalogDtos {
 
-    public record CatalogResponse(List<KitDto> kits) {}
+    public record CatalogResponse(List<KitDto> kits) {
+
+    }
 
     @JsonInclude(NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class KitInfoDto {
+
         public String code;
         public String desc;
 
-        public KitInfoDto() {}
+        public KitInfoDto() {
+        }
 
         public KitInfoDto(String code, String desc) {
             this.code = code;
@@ -33,6 +37,7 @@ public final class CatalogDtos {
     @JsonInclude(NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class KitDto {
+
         public String id;
         public String vehicleLabel;
         public CatalogSegment segment;
@@ -44,12 +49,14 @@ public final class CatalogDtos {
         public List<VariantDto> variants = new ArrayList<>();
         public Map<String, ViewDto> views = new HashMap<>();
 
-        public KitDto() {}
+        public KitDto() {
+        }
     }
 
     @JsonInclude(NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class GlassDto {
+
         public String id;
         public String model;
         public String code;
@@ -58,29 +65,39 @@ public final class CatalogDtos {
         public String side;
         public String dim;
         public int sortOrder;
+
+        public String pdfUrl;
+        public String parasolidXtUrl;
+        public String parasolidXbUrl;
+
         public List<String> options = new ArrayList<>();
 
-        public GlassDto() {}
+        public GlassDto() {
+        }
     }
 
     @JsonInclude(NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ViewDto {
+
         public String image;
         public Map<String, HotspotDto> coordsPxByGlassId = new HashMap<>();
 
-        public ViewDto() {}
+        public ViewDto() {
+        }
     }
 
     @JsonInclude(NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class HotspotDto {
+
         public int x;
         public int y;
         public int w;
         public int h;
 
-        public HotspotDto() {}
+        public HotspotDto() {
+        }
 
         public HotspotDto(int x, int y, int w, int h) {
             this.x = x;
@@ -93,7 +110,9 @@ public final class CatalogDtos {
     @JsonInclude(NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class BoxDto extends HotspotDto {
-        public BoxDto() {}
+
+        public BoxDto() {
+        }
 
         public BoxDto(int x, int y, int w, int h) {
             super(x, y, w, h);
@@ -103,26 +122,29 @@ public final class CatalogDtos {
     @JsonInclude(NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VariantDto {
+
         public String id;
         public String name;
         public String presentationImage;
         public List<ViewDtoSimple> views = new ArrayList<>();
 
-        public VariantDto() {}
+        public VariantDto() {
+        }
     }
 
     @JsonInclude(NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ViewDtoSimple {
+
         public String id;
         public String name;
         public String image;
         public LinkedHashMap<String, HotspotDto> coordsPxByGlassId = new LinkedHashMap<>();
 
-        public ViewDtoSimple() {}
+        public ViewDtoSimple() {
+        }
     }
 
-    private CatalogDtos() {}
+    private CatalogDtos() {
+    }
 }
-
-

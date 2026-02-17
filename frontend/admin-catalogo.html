@@ -1501,19 +1501,30 @@
       }
 
 
+      async function apiGetKit(id) {
+        const res = await fetch(`${API_BASE}/kits/${encodeURIComponent(id)}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        return res.json();
+      }
+
       async function apiSaveKit(kit) {
         const method = kit.id && kit.savedToServer ? "PUT" : "POST";
-        const url = kit.id && kit.savedToServer ? `/kits/${encodeURIComponent(kit.id)}` : "/kits";
+        const url = kit.id && kit.savedToServer
+          ? `/kits/${encodeURIComponent(kit.id)}`
+          : "/kits";
 
-        // Evita travar a tela com payload gigante
         console.log("[apiSaveKit] Method:", method, "URL:", url);
 
         const kitToSend = JSON.parse(JSON.stringify(kit));
         delete kitToSend.savedToServer;
 
-        // Backend salva a imagem do kit em defaultImage (CatalogKit.defaultImagePath)
         kitToSend.defaultImage = kitToSend.defaultImage || kitToSend.presentationImage || "";
         delete kitToSend.presentationImage;
+
+        // DEBUG delete variante
+        console.log("[apiSaveKit] Payload variants:", (kitToSend.variants || []).map(v => v.id));
+        console.log("[apiSaveKit] Payload variants count:", (kitToSend.variants || []).length);
+
 
         const res = await fetch(`${API_BASE}${url}`, {
           method,
@@ -1527,8 +1538,20 @@
           throw new Error(`HTTP ${res.status}: ${errorText}`);
         }
 
-        return res.json();
+        // Nem todo backend devolve JSON no PUT/POST (às vezes 204/vazio)
+        let savedId = kit.id;
+        const ct = res.headers.get("content-type") || "";
+        if (res.status !== 204 && ct.includes("application/json")) {
+          const saved = await res.json();
+          savedId = saved?.id ?? savedId;
+        }
+
+        // Marca como "já existe no servidor" no estado local (quem chama pode setar isso também)
+        const full = savedId ? await apiGetKit(savedId) : null;
+        if (full) full.savedToServer = true;
+        return full;
       }
+
 
       async function apiDeleteKit(id) {
         const res = await fetch(`${API_BASE}/kits/${encodeURIComponent(id)}`, {
@@ -2646,50 +2669,81 @@
           fields.className = "ca-hotspot-fields";
 
           fields.innerHTML = `
-            <div class="ca-field">
-              <label class="ca-label">ID</label>
-              <input class="ca-input" data-k="id" value="${hs.id || ""}" />
-            </div>
-  
-            <div class="ca-field">
-              <label class="ca-label">MODELO</label>
-              <input class="ca-input" data-k="model" value="${hs.glassData.model || ""}" />
-            </div>
-  
-            <div class="ca-field">
-              <label class="ca-label">CÓDIGO</label>
-              <input class="ca-input" data-k="code" value="${hs.glassData.code || ""}" />
-            </div>
-  
-            <div class="ca-field">
-              <label class="ca-label">DESCRIÇÃO</label>
-              <input class="ca-input" data-k="desc" value="${hs.glassData.desc || ""}" />
-            </div>
-  
-            <div class="ca-field">
-              <label class="ca-label">POSIÇÃO</label>
-              <input class="ca-input" data-k="position" value="${hs.glassData.position || ""}" />
-            </div>
-  
-            <div class="ca-field">
-              <label class="ca-label">LADO</label>
-              <input class="ca-input" data-k="side" value="${hs.glassData.side || ""}" />
-            </div>
-  
-            <div class="ca-field">
-              <label class="ca-label">DIMENSÕES</label>
-              <input class="ca-input" data-k="dim" value="${hs.glassData.dim || ""}" />
-            </div>
-  
-            <div class="ca-field">
-              <label class="ca-label">OPÇÕES (VÍRGULA)</label>
-              <input class="ca-input" data-k="options" value="${(hs.glassData.options || []).join(", ")}" />
-            </div>
-          `;
+  <div class="ca-field">
+    <label class="ca-label">ID</label>
+    <input class="ca-input" data-k="id" value="${hs.id || ""}" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">MODELO</label>
+    <input class="ca-input" data-k="model" value="${hs.glassData.model || ""}" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">CÓDIGO</label>
+    <input class="ca-input" data-k="code" value="${hs.glassData.code || ""}" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">DESCRIÇÃO</label>
+    <input class="ca-input" data-k="desc" value="${hs.glassData.desc || ""}" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">POSIÇÃO</label>
+    <input class="ca-input" data-k="position" value="${hs.glassData.position || ""}" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">LADO</label>
+    <input class="ca-input" data-k="side" value="${hs.glassData.side || ""}" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">DIMENSÕES</label>
+    <input class="ca-input" data-k="dim" value="${hs.glassData.dim || ""}" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">OPÇÕES (VÍRGULA)</label>
+    <input class="ca-input" data-k="options" value="${(hs.glassData.options || []).join(", ")}" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">PDF</label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button type="button" class="ca-btn ca-btn-primary" data-up="pdf">📤 Upload</button>
+      <button type="button" class="ca-btn ca-btn-ghost" data-rm="pdf">🗑 Remover</button>
+    </div>
+    <div class="ca-help" data-info="pdf"></div>
+    <input type="file" style="display:none" data-file="pdf" accept="application/pdf,.pdf" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">Parasolid (.x_t)</label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button type="button" class="ca-btn ca-btn-primary" data-up="xt">📤 Upload</button>
+      <button type="button" class="ca-btn ca-btn-ghost" data-rm="xt">🗑 Remover</button>
+    </div>
+    <div class="ca-help" data-info="xt"></div>
+    <input type="file" style="display:none" data-file="xt" accept=".x_t" />
+  </div>
+
+  <div class="ca-field">
+    <label class="ca-label">Parasolid (.x_b)</label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button type="button" class="ca-btn ca-btn-primary" data-up="xb">📤 Upload</button>
+      <button type="button" class="ca-btn ca-btn-ghost" data-rm="xb">🗑 Remover</button>
+    </div>
+    <div class="ca-help" data-info="xb"></div>
+    <input type="file" style="display:none" data-file="xb" accept=".x_b" />
+  </div>
+`;
 
           const headTitleEl = cardHead.querySelector(".ca-hotspot-card-title");
           const headIdEl = cardHead.querySelector(".ca-hotspot-card-id");
 
+          // mantém teus listeners dos inputs
           fields.querySelectorAll("input.ca-input").forEach((inp) => {
             inp.addEventListener("input", (e) => {
               const k = e.target.dataset.k;
@@ -2718,6 +2772,73 @@
               setDirty(true);
             });
           });
+
+          // --- uploads (PDF + Parasolid) ---
+          hs.glassData.pdfUrl = hs.glassData.pdfUrl || "";
+          hs.glassData.parasolidXtUrl = hs.glassData.parasolidXtUrl || "";
+          hs.glassData.parasolidXbUrl = hs.glassData.parasolidXbUrl || "";
+
+          function setInfo(kind, url) {
+            const info = fields.querySelector(`[data-info="${kind}"]`);
+            if (!info) return;
+            if (!url) { info.textContent = "Nenhum arquivo enviado."; return; }
+            const href = toPreviewUrl(url);
+            info.innerHTML = `Enviado: <a href="${href}" target="_blank" rel="noopener">abrir</a>`;
+          }
+
+          setInfo("pdf", hs.glassData.pdfUrl);
+          setInfo("xt", hs.glassData.parasolidXtUrl);
+          setInfo("xb", hs.glassData.parasolidXbUrl);
+
+          const map = {
+            pdf: { key: "pdfUrl" },
+            xt: { key: "parasolidXtUrl" },
+            xb: { key: "parasolidXbUrl" },
+          };
+
+          fields.querySelectorAll("button[data-up]").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const kind = btn.dataset.up;
+              fields.querySelector(`input[data-file="${kind}"]`)?.click();
+            });
+          });
+
+          fields.querySelectorAll("input[data-file]").forEach((inp) => {
+            inp.addEventListener("change", async (e) => {
+              const kind = inp.dataset.file;
+              const file = e.target.files?.[0];
+              if (!file) return;
+
+              try {
+                showAlert("Enviando arquivo...", "success");
+                const url = await uploadFile(file);
+                hs.glassData[map[kind].key] = url;
+                setDirty(true);
+                renderEditorHotspots();
+                showAlert("Arquivo enviado!", "success");
+              } catch (err) {
+                console.error(err);
+                showAlert(`Erro upload: ${err.message}`, "error");
+              } finally {
+                e.target.value = "";
+              }
+            });
+          });
+
+          fields.querySelectorAll("button[data-rm]").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const kind = btn.dataset.rm;
+              hs.glassData[map[kind].key] = "";
+              setDirty(true);
+              renderEditorHotspots();
+            });
+          });
+
+          card.appendChild(fields);
+          list.appendChild(card);
+
 
           card.appendChild(fields);
           list.appendChild(card);
@@ -2768,27 +2889,48 @@
 
         variant.presentationImage = editorPresentationImg[editorVariantId] || "";
 
+        // --- REBUILD glasses a partir das marcações (remove os que foram apagados) ---
         currentKit.glasses = currentKit.glasses || [];
 
-        // sync glasses a partir das marcações
+        // ids que ainda existem nas marcações
+        const usedIds = new Set();
+        variant.views.forEach((vw) => {
+          (editorHotspots[vw.id] || []).forEach((hs) => {
+            const id = String(hs?.id || "").trim();
+            if (id) usedIds.add(id);
+          });
+        });
+
+        // remove da lista os vidros que não têm mais marcação
+        currentKit.glasses = currentKit.glasses.filter((g) => usedIds.has(String(g?.id || "").trim()));
+
+        // upsert/atualiza dados dos vidros que sobraram
         variant.views.forEach((vw) => {
           const hsList = editorHotspots[vw.id] || [];
           hsList.forEach((hs) => {
             hs.glassData = hs.glassData || {};
             hs.glassData.id = hs.id;
 
-            const idx = currentKit.glasses.findIndex((g) => g.id === hs.id);
-            if (idx >= 0) currentKit.glasses[idx] = { ...currentKit.glasses[idx], ...hs.glassData, id: hs.id };
-            else currentKit.glasses.push({ ...hs.glassData, id: hs.id });
+            const idx = currentKit.glasses.findIndex((g) => String(g.id) === String(hs.id));
+            if (idx >= 0) {
+              currentKit.glasses[idx] = { ...currentKit.glasses[idx], ...hs.glassData, id: hs.id };
+            } else {
+              currentKit.glasses.push({ ...hs.glassData, id: hs.id });
+            }
           });
         });
 
+
         // grava coords por glassId
+        // grava coords por glassId (FIX: sempre limpar antes)
         variant.views.forEach((vw) => {
           vw.image = editorImageDataUrl[vw.id] || "";
-          vw.coordsPxByGlassId = {};
 
           const hsList = editorHotspots[vw.id] || [];
+
+          // <<< ESSA LINHA É A CORREÇÃO
+          vw.coordsPxByGlassId = {};
+
           hsList.forEach((hs) => {
             vw.coordsPxByGlassId[hs.id] = {
               x: Math.round(hs.x || 0),
@@ -2798,6 +2940,7 @@
             };
           });
         });
+
 
         el.get("caEditorBackdrop").classList.remove("ca-open");
         renderGlasses(currentKit.glasses);

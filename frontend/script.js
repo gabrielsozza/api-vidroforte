@@ -29,6 +29,28 @@ function clearChildren(el) {
    API
 ========================== */
 const API_BASE = "http://localhost:8080/api/catalog";
+const API_ORIGIN = new URL(API_BASE).origin;
+
+function toFileUrl(u) {
+  const s = String(u || "").trim();
+  if (!s) return "";
+  if (/^https?:\/\//i.test(s)) return s;
+  if (s.startsWith("/")) return `${API_ORIGIN}${s}`;
+  return `${API_ORIGIN}/${s}`;
+}
+
+function downloadByUrl(url, filename) {
+  const href = toFileUrl(url);
+  const a = document.createElement("a");
+  a.href = href;
+  a.target = "_blank";
+  a.rel = "noopener";
+  if (filename) a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
 
 async function apiGetJson(path) {
   const res = await fetch(`${API_BASE}${path}`);
@@ -327,7 +349,7 @@ function renderPanel() {
     setDividerDisplay($("#divA"), false);
     setDividerDisplay($("#divB"), false);
     clearChildren($("#options"));
-    updatePdfButtonVisibility(null);
+    updateFilesButtonsVisibility(null);
     return;
   }
 
@@ -355,7 +377,7 @@ function renderPanel() {
     setDividerDisplay($("#divB"), false);
     setRowDisplay($("#rowOptions"), false);
     clearChildren($("#options"));
-    updatePdfButtonVisibility(null);
+    updateFilesButtonsVisibility(null);
     return;
   }
 
@@ -389,7 +411,7 @@ function renderPanel() {
     optionsEl.appendChild(span);
   });
 
-  updatePdfButtonVisibility(glass);
+  updateFilesButtonsVisibility(glass);
 }
 
 /* ==========================
@@ -492,7 +514,7 @@ function bindEvents() {
   const kitSelect = $("#kitSelect");
   const filterVehicle = $("#filterVehicle");
   const filterType = $("#filterType");
-  const filterView = $("#filterView"); // <<< ADD
+  const filterView = $("#filterView");
   const imageWrap = $("#imageWrap");
   const vehicleImg = $("#vehicleImg");
 
@@ -506,19 +528,17 @@ function bindEvents() {
     renderSelectFromFilters();
   });
 
-  // Troca de variante (Configuração: Padrão, Ambulância, Escolar, etc.)
   filterType?.addEventListener("change", (e) => {
     const variantId = e.target.value;
     if (variantId) {
       selectVariant(variantId);
-      renderViewSelector();   // <<< ADD (recarrega as views da variante)
+      renderViewSelector();
     }
   });
 
-  // Troca de view (Apresentação, Sem abertura, 1 abertura, ...)
-  filterView?.addEventListener("change", (e) => {   // <<< ADD
+  filterView?.addEventListener("change", (e) => {
     const id = e.target.value;
-    state.currentViewId = id || null; // "" => apresentação
+    state.currentViewId = id || null;
     state.selectedGlassId = null;
     renderPanel();
     renderCurrentView();
@@ -537,8 +557,23 @@ function bindEvents() {
     renderHotspots();
   });
 
-  $("#btnDownloadPdf")?.addEventListener("click", baixarPDF);
+  // Downloads (NOVO)
+  document.getElementById("btnDownloadPdf")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    baixarPDF();
+  });
+
+  document.getElementById("btnDownloadXt")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    baixarXT();
+  });
+
+  document.getElementById("btnDownloadXb")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    baixarXB();
+  });
 }
+
 
 /* ==========================
    AUTH & PDF
@@ -579,11 +614,25 @@ function verificarAutenticacao() {
   }
 }
 
-function updatePdfButtonVisibility(glass) {
-  const btnPdf = $("#btnDownloadPdf");
-  if (!btnPdf) return;
-  btnPdf.style.display = glass && usuarioLogado ? "block" : "none";
+function updateFilesButtonsVisibility(glass) {
+  const box = document.getElementById("filesBox");
+  const btnPdf = document.getElementById("btnDownloadPdf");
+  const btnXt = document.getElementById("btnDownloadXt");
+  const btnXb = document.getElementById("btnDownloadXb");
+
+  const canShow = !!usuarioLogado && !!glass;
+
+  const hasPdf = !!glass?.pdfUrl;
+  const hasXt = !!glass?.parasolidXtUrl;
+  const hasXb = !!glass?.parasolidXbUrl;
+
+  if (btnPdf) btnPdf.style.display = (canShow && hasPdf) ? "block" : "none";
+  if (btnXt) btnXt.style.display = (canShow && hasXt) ? "block" : "none";
+  if (btnXb) btnXb.style.display = (canShow && hasXb) ? "block" : "none";
+
+  if (box) box.style.display = (canShow && (hasPdf || hasXt || hasXb)) ? "block" : "none";
 }
+
 
 function logout() {
   if (confirm("Deseja realmente sair?")) {
@@ -600,38 +649,37 @@ function irParaCadastro() {
   window.location.href = "cadastro.html";
 }
 
-async function baixarPDF() {
-  if (!usuarioLogado) {
-    alert("Você precisa estar logado para baixar o PDF");
-    window.location.href = "login.html";
-    return;
-  }
-
-  const kitId = state.kitId;
-  const glassId = state.selectedGlassId;
-  if (!kitId || !glassId) {
-    alert("Selecione um vidro antes de baixar o PDF");
-    return;
-  }
-
-  const url = `${API_BASE}/kits/${encodeURIComponent(
-    kitId
-  )}/glasses/${encodeURIComponent(glassId)}/pdf`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-  const blob = await res.blob();
-  const blobUrl = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = blobUrl;
-  a.download = `${kitId}-${glassId}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  URL.revokeObjectURL(blobUrl);
+function getSelectedGlass() {
+  return state.selectedGlassId ? getGlassById(state.selectedGlassId) : null;
 }
+
+async function baixarPDF() {
+  if (!usuarioLogado) { alert("Você precisa estar logado"); window.location.href = "login.html"; return; }
+
+  const glass = getSelectedGlass();
+  if (!glass?.pdfUrl) { alert("Este vidro não tem PDF cadastrado."); return; }
+
+  downloadByUrl(glass.pdfUrl, `${state.kitId || "kit"}-${glass.id || "glass"}.pdf`);
+}
+
+async function baixarXT() {
+  if (!usuarioLogado) { alert("Você precisa estar logado"); window.location.href = "login.html"; return; }
+
+  const glass = getSelectedGlass();
+  if (!glass?.parasolidXtUrl) { alert("Este vidro não tem Parasolid (.x_t) cadastrado."); return; }
+
+  downloadByUrl(glass.parasolidXtUrl, `${state.kitId || "kit"}-${glass.id || "glass"}.x_t`);
+}
+
+async function baixarXB() {
+  if (!usuarioLogado) { alert("Você precisa estar logado"); window.location.href = "login.html"; return; }
+
+  const glass = getSelectedGlass();
+  if (!glass?.parasolidXbUrl) { alert("Este vidro não tem Parasolid (.x_b) cadastrado."); return; }
+
+  downloadByUrl(glass.parasolidXbUrl, `${state.kitId || "kit"}-${glass.id || "glass"}.x_b`);
+}
+
 
 /* ==========================
    BURGER MENU

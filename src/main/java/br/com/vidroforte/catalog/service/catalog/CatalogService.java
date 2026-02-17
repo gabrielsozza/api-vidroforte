@@ -1,26 +1,35 @@
 package br.com.vidroforte.catalog.service.catalog;
 
-import br.com.vidroforte.catalog.dto.catalog.CatalogDtos.*;
-import br.com.vidroforte.catalog.model.catalog.*;
-import br.com.vidroforte.catalog.repository.catalog.CatalogGlassRepository;
-import br.com.vidroforte.catalog.repository.catalog.CatalogKitRepository;
-import br.com.vidroforte.catalog.repository.catalog.CatalogVariantHotspotRepository;
-import br.com.vidroforte.catalog.repository.catalog.CatalogVariantRepository;
-import br.com.vidroforte.catalog.repository.catalog.CatalogVariantViewRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import java.util.Set;
-import java.util.HashSet;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.vidroforte.catalog.dto.catalog.CatalogDtos.GlassDto;
+import br.com.vidroforte.catalog.dto.catalog.CatalogDtos.HotspotDto;
+import br.com.vidroforte.catalog.dto.catalog.CatalogDtos.KitDto;
+import br.com.vidroforte.catalog.dto.catalog.CatalogDtos.KitInfoDto;
+import br.com.vidroforte.catalog.dto.catalog.CatalogDtos.VariantDto;
+import br.com.vidroforte.catalog.dto.catalog.CatalogDtos.ViewDtoSimple;
+import br.com.vidroforte.catalog.model.catalog.CatalogGlass;
+import br.com.vidroforte.catalog.model.catalog.CatalogKit;
+import br.com.vidroforte.catalog.model.catalog.CatalogSegment;
+import br.com.vidroforte.catalog.model.catalog.CatalogVariant;
+import br.com.vidroforte.catalog.model.catalog.CatalogVariantHotspot;
+import br.com.vidroforte.catalog.model.catalog.CatalogVariantView;
+import br.com.vidroforte.catalog.repository.catalog.CatalogGlassRepository;
+import br.com.vidroforte.catalog.repository.catalog.CatalogKitRepository;
+import br.com.vidroforte.catalog.repository.catalog.CatalogVariantHotspotRepository;
+import br.com.vidroforte.catalog.repository.catalog.CatalogVariantRepository;
+import br.com.vidroforte.catalog.repository.catalog.CatalogVariantViewRepository;
 
 @Service
 public class CatalogService {
@@ -155,8 +164,26 @@ public class CatalogService {
 
         kitRepo.save(kit);
 
-        // 2) Merge de GLASSES (cria/atualiza por id; não deleta ausentes)
+        // 2) Merge de GLASSES (cria/atualiza por id; DELETA ausentes)
         if (dto.glasses != null) {
+
+            Set<String> incomingGlassIds = dto.glasses.stream()
+                    .filter(Objects::nonNull)
+                    .map(g -> g.id)
+                    .filter(id -> id != null && !id.isBlank())
+                    .collect(Collectors.toSet());
+
+            // delete os que não vieram no payload
+            List<CatalogGlass> existing = glassRepo.findByKit_IdOrderBySortOrderAsc(kitId);
+            for (CatalogGlass old : existing) {
+                if (old == null) {
+                    continue;
+                }
+                if (!incomingGlassIds.contains(old.getId())) {
+                    glassRepo.delete(old);
+                }
+            }
+
             int order = 0;
             for (GlassDto gDto : dto.glasses) {
                 if (gDto == null || gDto.id == null || gDto.id.isBlank()) {
@@ -168,6 +195,7 @@ public class CatalogService {
 
                 g.setId(gDto.id);
                 g.setKit(kit);
+
                 if (gDto.model != null) {
                     g.setModel(gDto.model);
                 }
@@ -187,7 +215,16 @@ public class CatalogService {
                     g.setDim(gDto.dim);
                 }
 
-                // Ordenação consistente
+                if (gDto.pdfUrl != null) {
+                    g.setPdfUrl(gDto.pdfUrl);
+                }
+                if (gDto.parasolidXtUrl != null) {
+                    g.setParasolidXtUrl(gDto.parasolidXtUrl);
+                }
+                if (gDto.parasolidXbUrl != null) {
+                    g.setParasolidXbUrl(gDto.parasolidXbUrl);
+                }
+
                 g.setSortOrder(order++);
 
                 if (gDto.options != null) {
@@ -200,6 +237,34 @@ public class CatalogService {
 
         // 3) Merge de VARIANTS / VIEWS / HOTSPOTS
         if (dto.variants != null) {
+            // 3.0) DELETE de VARIANTS ausentes no payload (payload = verdade)
+            Set<String> incomingVariantIds = dto.variants.stream()
+                    .filter(Objects::nonNull)
+                    .map(v -> v.id)
+                    .filter(id -> id != null && !id.isBlank())
+                    .collect(Collectors.toSet());
+
+            List<CatalogVariant> existingVariants = variantRepo.findByKit_Id(kitId);
+
+            for (CatalogVariant oldVariant : existingVariants) {
+                if (oldVariant == null) {
+                    continue;
+                }
+
+                if (!incomingVariantIds.contains(oldVariant.getVariantId())) {
+                    // apaga filhos primeiro (views/hotspots) pra não estourar FK
+                    List<CatalogVariantView> oldViews = variantViewRepo.findByVariant_Id(oldVariant.getId());
+                    for (CatalogVariantView ov : oldViews) {
+                        if (ov == null) {
+                            continue;
+                        }
+                        variantHotspotRepo.deleteAllByVariantViewId(ov.getId());
+                        variantViewRepo.delete(ov);
+                    }
+                    variantRepo.delete(oldVariant);
+                }
+            }
+
             for (VariantDto vDto : dto.variants) {
                 if (vDto == null || vDto.id == null || vDto.id.isBlank()) {
                     throw new IllegalArgumentException("Toda variante precisa de id");
@@ -249,7 +314,7 @@ public class CatalogService {
                         continue;
                     }
                     if (!incomingViewIds.contains(oldView.getViewId())) {
-                        variantHotspotRepo.deleteByVariantView_Id(oldView.getId());
+                        variantHotspotRepo.deleteAllByVariantViewId(oldView.getId());
                         variantViewRepo.delete(oldView);
                     }
                 }
@@ -273,27 +338,30 @@ public class CatalogService {
 
                     view = variantViewRepo.save(view);
 
-                    // Hotspots: null => não mexe; {} => limpa
-                    if (viewDto.coordsPxByGlassId != null) {
-                        variantHotspotRepo.deleteByVariantView_Id(view.getId());
+                    // Hotspots: payload = verdade (sempre sincroniza)
+                    // sempre sincroniza hotspots (payload = verdade)
+                    variantHotspotRepo.deleteAllByVariantViewId(view.getId());
 
-                        for (Map.Entry<String, HotspotDto> e : viewDto.coordsPxByGlassId.entrySet()) {
-                            String glassId = e.getKey();
-                            HotspotDto h = e.getValue();
-                            if (glassId == null || glassId.isBlank() || h == null) {
-                                continue;
-                            }
+                    Map<String, HotspotDto> map
+                            = (viewDto.coordsPxByGlassId == null) ? new LinkedHashMap<>() : viewDto.coordsPxByGlassId;
 
-                            CatalogVariantHotspot hs = new CatalogVariantHotspot();
-                            hs.setVariantView(view);
-                            hs.setGlassId(glassId);
-                            hs.setX(h.x);
-                            hs.setY(h.y);
-                            hs.setW(h.w);
-                            hs.setH(h.h);
-                            variantHotspotRepo.save(hs);
-                        }
+                    for (Map.Entry<String, HotspotDto> e : map.entrySet()) {
+                        String glassId = e.getKey();
+                        HotspotDto h = e.getValue();
+                        if (glassId == null || glassId.isBlank() || h == null)
+                            continue;
+                        
+
+                        CatalogVariantHotspot hs = new CatalogVariantHotspot();
+                        hs.setVariantView(view);
+                        hs.setGlassId(glassId);
+                        hs.setX(h.x);
+                        hs.setY(h.y);
+                        hs.setW(h.w);
+                        hs.setH(h.h);
+                        variantHotspotRepo.save(hs);
                     }
+
                 }
             }
         }
@@ -322,6 +390,11 @@ public class CatalogService {
         dto.side = g.getSide();
         dto.dim = g.getDim();
         dto.sortOrder = g.getSortOrder();
+
+        dto.pdfUrl = g.getPdfUrl();
+        dto.parasolidXtUrl = g.getParasolidXtUrl();
+        dto.parasolidXbUrl = g.getParasolidXbUrl();
+
         dto.options = (g.getOptions() == null) ? new ArrayList<>() : new ArrayList<>(g.getOptions());
         return dto;
     }
