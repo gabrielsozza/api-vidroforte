@@ -1276,7 +1276,13 @@
       "use strict";
       console.log("[CatalogAdmin] Versão 3.2 (patch upload kit + defaultImage)");
 
-      const API_BASE = "http://localhost:8080/api/admin/catalog";
+      const API_BASE = (() => {
+        const host = window.location.hostname;
+        if (host === "localhost" || host === "127.0.0.1" || host === "") {
+          return "http://localhost:8080/api/admin/catalog";
+        }
+        return "https://api.catalogovidroforte.com.br/api/admin/catalog";
+      })();
       const API_ORIGIN = new URL(API_BASE).origin;
 
       let allKits = [];

@@ -28,7 +28,13 @@ function clearChildren(el) {
 /* ==========================
    API
 ========================== */
-const API_BASE = "http://localhost:8080/api/catalog";
+const API_BASE = (() => {
+  const host = window.location.hostname;
+  if (host === "localhost" || host === "127.0.0.1" || host === "") {
+    return "http://localhost:8080/api/catalog";
+  }
+  return "https://api.catalogovidroforte.com.br/api/catalog";
+})();
 const API_ORIGIN = new URL(API_BASE).origin;
 
 function toFileUrl(u) {
@@ -199,7 +205,7 @@ function renderCurrentView() {
     : (view?.image || variant?.presentationImage || kit.defaultImage || "");
 
   if (vehicleImg) {
-    vehicleImg.src = imageSrc;
+    vehicleImg.src = imageSrc ? toFileUrl(imageSrc) : "";
     vehicleImg.alt = kit.vehicleLabel
       ? `${kit.vehicleLabel} - ${state.currentVariantId || ""}`
       : "";
